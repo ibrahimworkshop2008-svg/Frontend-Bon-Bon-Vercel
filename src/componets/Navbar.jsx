@@ -145,6 +145,15 @@ const Navbar = () => {
     };
   }, [isMenuOpen]);
 
+  const initials = user.name
+  .trim()
+  .split(/\s+/)
+  .slice(0, 2)
+  .map(word => word[0].toUpperCase())
+  .join("");
+
+console.log(initials);
+
   return (
     <>
       {/* =====================================================
@@ -267,7 +276,7 @@ const Navbar = () => {
                       whitespace-nowrap
                       font-['Bebas_Neue']
                       text-[13px]
-                      font-bold
+                      font-[500]
                       transition-colors
                       duration-200
                       xl:text-sm
@@ -328,24 +337,25 @@ const Navbar = () => {
                     h-9
                     w-9
                     items-center
-                    justify-center
+                    justify-end
                     rounded-full
-                    bg-blue-50
                   "
                 >
                   <MapPin
-                    size={18}
-                    className="text-blue-500"
+                    size={20}
+                    className="text-black"
                   />
                 </div>
 
                 <div
                   className="
                     whitespace-nowrap
-                    text-[11px]
+                    text-[12px]
+                      font-['Bebas_Neue']
+                    
                     leading-tight
-                    text-slate-700
-                    xl:text-[12px]
+                    text-black
+                    xl:text-[13px]
                   "
                 >
                   <p className="font-semibold">
@@ -366,10 +376,12 @@ const Navbar = () => {
                   hidden
                   whitespace-nowrap
                   text-right
-                  text-[11px]
+                  text-[12px]
+                  font-['Bebas_Neue']
+
                   leading-tight
                   xl:block
-                  xl:text-[12px]
+                  xl:text-[13px]
                 "
               >
                 <p className="font-bold text-slate-800">
@@ -397,9 +409,9 @@ const Navbar = () => {
                   items-center
                   justify-center
                   rounded-full
-                  border
-                  border-blue-100
-                  bg-blue-50
+                  border-[1px]
+                  border-blue-400
+                  bg-white
                   transition-all
                   duration-200
                   hover:-translate-y-0.5
@@ -457,10 +469,10 @@ const Navbar = () => {
                       gap-2
                       rounded-full
                       border
-                      border-blue-100
-                      bg-blue-50
-                      px-2
-                      py-2
+                      border-blue-400
+                      bg-white
+                      
+                      py-1
                       transition
                       hover:bg-blue-100
                       xl:px-3
@@ -477,10 +489,10 @@ const Navbar = () => {
                         justify-center
                         rounded-full
                         bg-blue-500
-                        text-white
+                        text-white mr-3
                       "
                     >
-                      <User size={16} />
+                     <h1>{initials}</h1>
                     </div>
 
                     <div className="hidden text-left 2xl:block">

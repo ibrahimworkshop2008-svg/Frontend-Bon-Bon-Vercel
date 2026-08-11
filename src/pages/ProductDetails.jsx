@@ -37,18 +37,15 @@ const ProductDetails = () => {
       setLoading(true);
 
       const token = localStorage.getItem("accessToken");
-
+      console.log(id)
       const response = await api.get(
   `/product/find/${id}`
 );
-s
-      if (!response.ok) {
-        throw new Error("Failed to fetch product");
-      }
 
-      const data = await response.json();
+    
 
-      setProduct(data.product || data);
+      console.log("Hello", response.data.product)
+      setProduct(response.data.product || response.data);
     } catch (error) {
       console.error("Product details error:", error);
     } finally {
