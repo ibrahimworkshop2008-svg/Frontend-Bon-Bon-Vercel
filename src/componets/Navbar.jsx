@@ -145,12 +145,14 @@ const Navbar = () => {
     };
   }, [isMenuOpen]);
 
-  const initials = user.name
-  .trim()
-  .split(/\s+/)
-  .slice(0, 2)
-  .map(word => word[0].toUpperCase())
-  .join("");
+  const initials = user?.name
+  ? user.name
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map(word => word[0].toUpperCase())
+      .join("")
+  : "";
 
 console.log(initials);
 
