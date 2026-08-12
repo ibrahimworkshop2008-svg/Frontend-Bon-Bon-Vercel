@@ -160,7 +160,7 @@ const FlavorSection = () => {
             text-red-500
           "
         >
-          {error}
+         hello {error}
         </p>
       </section>
     );
