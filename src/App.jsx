@@ -4,6 +4,8 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+
 
 import Navbar from "./componets/Navbar";
 import SideProductShow from "./componets/SideProductShow";
@@ -51,6 +53,35 @@ const AppContent = () => {
 
   return (
     <>
+
+    <Toaster
+        position="top-right"
+        reverseOrder={false}
+        toastOptions={{
+          duration: 4000,
+
+          style: {
+            borderRadius: "12px",
+            background: "#17253d",
+            color: "#fff",
+            padding: "14px 18px",
+            fontSize: "14px",
+          },
+
+          success: {
+            duration: 4000,
+            iconTheme: {
+              primary: "#087fd3",
+              secondary: "#fff",
+            },
+          },
+
+          error: {
+            duration: 4000,
+          },
+        }}
+      />
+
       {/* ====================================
           SCROLL TO TOP
       ==================================== */}
