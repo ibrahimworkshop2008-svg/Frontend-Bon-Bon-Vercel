@@ -5,6 +5,8 @@ import {
   ArrowRight,
   Loader2,
   PackageOpen,
+  Heart,
+  Plus,
 } from "lucide-react";
 
 import api from "../api/axiosInstance";
@@ -14,6 +16,7 @@ const Menu = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [favorites, setFavorites] = useState([]);
 
   const { addToCart } = useCart();
 
@@ -27,14 +30,7 @@ const Menu = () => {
         setLoading(true);
         setError("");
 
-        const response = await api.get(
-          "/product/all"
-        );
-
-        console.log("Products API:", response.data);
-
-        // Your backend returns:
-        // { products: [...] }
+        const response = await api.get("/product/all");
 
         const productData = response.data?.products || [];
 
@@ -68,6 +64,18 @@ const Menu = () => {
   };
 
   // ==========================================
+  // FAVORITE
+  // ==========================================
+
+  const toggleFavorite = (id) => {
+    setFavorites((prev) =>
+      prev.includes(id)
+        ? prev.filter((item) => item !== id)
+        : [...prev, id]
+    );
+  };
+
+  // ==========================================
   // ADD TO CART
   // ==========================================
 
@@ -76,89 +84,73 @@ const Menu = () => {
   };
 
   return (
-    <section className="w-full bg-white py-16">
+    <section className="w-full bg-[#fbfaf7] py-20 sm:py-24">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
 
-      {/* ========================================
-          HEADER
-      ========================================= */}
+        {/* =================================================
+            SECTION HEADER
+        ================================================= */}
 
-      <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+        <div className="mb-14 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
 
-        <div className="mb-10 text-center">
+          <div className="max-w-2xl">
 
-          <p
-            className="
-              text-sm
-              font-bold
-              uppercase
-              tracking-[3px]
-              text-[#087fd3]
-            "
-          >
-            Our Menu
-          </p>
+            <div className="mb-4 flex items-center gap-3">
+              <span className="h-[1px] w-8 bg-[#087fd3]" />
 
-          <h2
-            className="
-              mt-2
-              text-3xl
-              font-extrabold
-              tracking-tight
-              text-[#17253d]
-              sm:text-4xl
-              lg:text-5xl
-            "
-          >
-            OUR DELICIOUS
-            <span className="block text-[#087fd3]">
-              DONUTS
-            </span>
-          </h2>
+              <p className="text-[11px] font-bold uppercase tracking-[3px] text-[#087fd3]">
+                Freshly made
+              </p>
+            </div>
 
-          <p
-            className="
-              mx-auto
-              mt-4
-              max-w-2xl
-              text-sm
-              leading-6
-              text-[#34445b]
-              sm:text-base
-            "
-          >
-            Discover our delicious collection of freshly
-            made donuts. Choose your favorite and enjoy
-            every bite.
-          </p>
+            <h2 className="font-serif text-4xl leading-[1.05] tracking-tight text-[#17253d] sm:text-5xl lg:text-6xl">
+              Something sweet
+              <span className="block italic font-normal text-[#087fd3]">
+                for every mood.
+              </span>
+            </h2>
+
+            <p className="mt-5 max-w-xl text-sm leading-7 text-[#667085] sm:text-base">
+              From classic favorites to little indulgences,
+              discover donuts made to brighten your day.
+            </p>
+
+          </div>
+
+          {/* Small collection info */}
+
+          {!loading && !error && products.length > 0 && (
+            <div className="hidden shrink-0 md:block">
+              <p className="text-right text-xs uppercase tracking-[2px] text-[#98a2b3]">
+                Our collection
+              </p>
+
+              <p className="mt-1 text-right text-sm font-semibold text-[#17253d]">
+                {products.length} delicious choices
+              </p>
+            </div>
+          )}
 
         </div>
 
 
-        {/* ========================================
+        {/* =================================================
             LOADING
-        ========================================= */}
+        ================================================= */}
 
         {loading && (
-          <div
-            className="
-              flex
-              min-h-[300px]
-              items-center
-              justify-center
-            "
-          >
+          <div className="flex min-h-[360px] items-center justify-center">
             <div className="flex flex-col items-center">
 
-              <Loader2
-                size={40}
-                className="
-                  animate-spin
-                  text-[#087fd3]
-                "
-              />
+              <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#dcecf7] bg-white">
+                <Loader2
+                  size={24}
+                  className="animate-spin text-[#087fd3]"
+                />
+              </div>
 
-              <p className="mt-4 text-sm font-medium text-gray-500">
-                Loading delicious donuts...
+              <p className="mt-5 text-sm text-[#667085]">
+                Finding something delicious...
               </p>
 
             </div>
@@ -166,346 +158,332 @@ const Menu = () => {
         )}
 
 
-        {/* ========================================
+        {/* =================================================
             ERROR
-        ========================================= */}
+        ================================================= */}
 
         {!loading && error && (
-          <div
-            className="
-              mx-auto
-              max-w-lg
-              rounded-2xl
-              border
-              border-red-100
-              bg-red-50
-              p-6
-              text-center
-            "
-          >
-            <p className="font-semibold text-red-500">
+          <div className="mx-auto max-w-lg rounded-[28px] border border-red-100 bg-white p-8 text-center shadow-sm">
+
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-50">
+              <PackageOpen
+                size={25}
+                className="text-red-400"
+              />
+            </div>
+
+            <h3 className="mt-5 text-lg font-bold text-[#17253d]">
+              Something went wrong
+            </h3>
+
+            <p className="mt-2 text-sm text-[#667085]">
               {error}
             </p>
 
             <button
               type="button"
               onClick={() => window.location.reload()}
-              className="
-                mt-4
-                rounded-full
-                bg-red-500
-                px-5
-                py-2
-                text-sm
-                font-semibold
-                text-white
-                transition
-                hover:bg-red-600
-              "
+              className="mt-6 rounded-full bg-[#17253d] px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#087fd3]"
             >
               Try Again
             </button>
+
           </div>
         )}
 
 
-        {/* ========================================
+        {/* =================================================
             EMPTY
-        ========================================= */}
+        ================================================= */}
 
         {!loading &&
           !error &&
           products.length === 0 && (
+            <div className="flex min-h-[360px] flex-col items-center justify-center rounded-[32px] border border-[#e9edf1] bg-white px-6 text-center">
 
-            <div
-              className="
-                flex
-                min-h-[300px]
-                flex-col
-                items-center
-                justify-center
-                rounded-3xl
-                bg-[#f5fbff]
-                p-8
-                text-center
-              "
-            >
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#f1f8fc]">
+                <PackageOpen
+                  size={28}
+                  className="text-[#087fd3]"
+                />
+              </div>
 
-              <PackageOpen
-                size={50}
-                className="text-[#087fd3]"
-              />
-
-              <h3
-                className="
-                  mt-4
-                  text-xl
-                  font-bold
-                  text-[#17253d]
-                "
-              >
-                No products found
+              <h3 className="mt-5 text-xl font-bold text-[#17253d]">
+                Nothing here yet
               </h3>
 
-              <p className="mt-2 text-sm text-gray-500">
-                There are currently no products available.
+              <p className="mt-2 max-w-sm text-sm leading-6 text-[#667085]">
+                We're preparing something delicious.
+                Please check back soon.
               </p>
 
             </div>
           )}
 
 
-        {/* ========================================
-            PRODUCTS GRID
-        ========================================= */}
+        {/* =================================================
+            PRODUCT GRID
+        ================================================= */}
 
         {!loading &&
           !error &&
           products.length > 0 && (
 
-            <div
-              className="
-                grid
-                grid-cols-1
-                gap-6
-                sm:grid-cols-2
-                lg:grid-cols-3
-                xl:grid-cols-4
-              "
-            >
+            <div className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 
-              {products.map((product) => (
+              {products.map((product, index) => {
 
-                <div
-                  key={product._id}
-                  className="
-                    group
-                    overflow-hidden
-                    rounded-3xl
-                    border
-                    border-blue-50
-                    bg-white
-                    shadow-[0_8px_30px_rgba(23,37,61,0.06)]
-                    transition-all
-                    duration-300
-                    hover:-translate-y-2
-                    hover:shadow-[0_18px_40px_rgba(23,37,61,0.12)]
-                  "
-                >
+                const isFavorite = favorites.includes(product._id);
 
-                  {/* ==================================
-                      PRODUCT IMAGE
-                  =================================== */}
-
-                  <Link
-                    to={`/product/${product._id}`}
-                    className="
-                      relative
-                      block
-                      overflow-hidden
-                      bg-[#f5fbff]
-                    "
+                return (
+                  <article
+                    key={product._id}
+                    className="group relative"
                   >
 
-                    <div
-                      className="
-                        flex
-                        h-[240px]
-                        items-center
-                        justify-center
-                        p-6
-                      "
-                    >
+                    {/* ====================================
+                        PRODUCT IMAGE
+                    ==================================== */}
 
-                      <img
-                        src={getProductImage(product)}
-                        alt={product.name}
-                        className="
-                          h-full
-                          w-full
-                          object-contain
-                          transition-transform
-                          duration-500
-                          group-hover:scale-110
-                        "
-                      />
+                    <div className="relative overflow-hidden rounded-[28px] bg-[#f1f7fa]">
 
-                    </div>
+                      {/* Product number */}
+
+                      <span className="absolute left-4 top-4 z-10 flex h-8 min-w-8 items-center justify-center rounded-full bg-white/90 px-2 text-[10px] font-bold text-[#17253d] shadow-sm backdrop-blur-sm">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
 
 
-                    {/* View Details */}
-
-                    <div
-                      className="
-                        absolute
-                        bottom-4
-                        left-1/2
-                        -translate-x-1/2
-                        translate-y-4
-                        rounded-full
-                        bg-white
-                        px-4
-                        py-2
-                        text-xs
-                        font-bold
-                        text-[#087fd3]
-                        opacity-0
-                        shadow-lg
-                        transition-all
-                        duration-300
-                        group-hover:translate-y-0
-                        group-hover:opacity-100
-                      "
-                    >
-                      View Details
-                    </div>
-
-                  </Link>
-
-
-                  {/* ==================================
-                      PRODUCT CONTENT
-                  =================================== */}
-
-                  <div className="p-5">
-
-                    <Link
-                      to={`/product/${product._id}`}
-                      className="
-                        block
-                        truncate
-                        text-lg
-                        font-extrabold
-                        text-[#17253d]
-                        transition-colors
-                        hover:text-[#087fd3]
-                      "
-                    >
-                      {product.name}
-                    </Link>
-
-
-                    {/* Description */}
-
-                    {product.description && (
-                      <p
-                        className="
-                          mt-2
-                          line-clamp-2
-                          min-h-[40px]
-                          text-sm
-                          leading-5
-                          text-[#667085]
-                        "
-                      >
-                        {product.description}
-                      </p>
-                    )}
-
-
-                    {/* Price + Cart */}
-
-                    <div
-                      className="
-                        mt-5
-                        flex
-                        items-center
-                        justify-between
-                        gap-3
-                      "
-                    >
-
-                      <div>
-                        <p className="text-xs font-medium text-gray-400">
-                          Price
-                        </p>
-
-                        <p
-                          className="
-                            mt-0.5
-                            text-xl
-                            font-extrabold
-                            text-[#087fd3]
-                          "
-                        >
-                          ${product.price}
-                        </p>
-                      </div>
-
-
-                      {/* Add To Cart */}
+                      {/* Favorite */}
 
                       <button
                         type="button"
-                        onClick={() => handleAddToCart(product)}
-                        className="
-                          flex
-                          h-11
-                          w-11
-                          shrink-0
-                          items-center
-                          justify-center
-                          rounded-full
-                          bg-[#087fd3]
-                          text-white
-                          shadow-md
-                          shadow-blue-100
-                          transition-all
-                          duration-300
-                          hover:scale-105
-                          hover:bg-[#066db8]
-                          active:scale-95
-                        "
-                        aria-label={`Add ${product.name} to cart`}
+                        onClick={() =>
+                          toggleFavorite(product._id)
+                        }
+                        aria-label={
+                          isFavorite
+                            ? `Remove ${product.name} from favorites`
+                            : `Add ${product.name} to favorites`
+                        }
+                        className={`absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm transition-all duration-300 ${
+                          isFavorite
+                            ? "text-red-500"
+                            : "text-[#17253d] hover:text-red-500"
+                        }`}
                       >
-                        <ShoppingCart size={19} />
+                        <Heart
+                          size={16}
+                          fill={isFavorite ? "currentColor" : "none"}
+                        />
                       </button>
+
+
+                      <Link
+                        to={`/product/${product._id}`}
+                        className="relative block"
+                      >
+
+                        <div className="flex h-[285px] items-center justify-center overflow-hidden p-7 sm:h-[300px]">
+
+                          <img
+                            src={getProductImage(product)}
+                            alt={product.name}
+                            loading="lazy"
+                            className="
+                              h-full
+                              w-full
+                              object-contain
+                              transition-all
+                              duration-700
+                              ease-out
+                              group-hover:scale-[1.07]
+                              group-hover:-rotate-1
+                            "
+                          />
+
+                        </div>
+
+
+                        {/* View product */}
+
+                        <div className="absolute bottom-4 left-4 right-4 translate-y-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+
+                          <div className="flex items-center justify-center gap-2 rounded-2xl bg-white/95 px-4 py-3 text-xs font-bold text-[#17253d] shadow-lg backdrop-blur-sm">
+
+                            View product
+
+                            <ArrowRight size={14} />
+
+                          </div>
+
+                        </div>
+
+                      </Link>
 
                     </div>
 
-                  </div>
 
-                </div>
+                    {/* ====================================
+                        PRODUCT INFO
+                    ==================================== */}
 
-              ))}
+                    <div className="px-1 pt-5">
+
+                      {/* Category */}
+
+                      <div className="mb-2 flex items-center gap-2">
+
+                        <span className="text-[10px] font-bold uppercase tracking-[1.8px] text-[#087fd3]">
+                          {product.category || "Donut"}
+                        </span>
+
+                        <span className="h-1 w-1 rounded-full bg-[#cbd5df]" />
+
+                        <span className="text-[10px] uppercase tracking-[1px] text-[#98a2b3]">
+                          Fresh
+                        </span>
+
+                      </div>
+
+
+                      {/* Name */}
+
+                      <Link
+                        to={`/product/${product._id}`}
+                        className="block"
+                      >
+                        <h3 className="truncate font-serif text-[22px] font-semibold leading-tight text-[#17253d] transition-colors duration-300 group-hover:text-[#087fd3]">
+                          {product.name}
+                        </h3>
+                      </Link>
+
+
+                      {/* Description */}
+
+                      {product.description && (
+                        <p className="mt-2 line-clamp-2 min-h-[40px] max-w-[290px] text-[13px] leading-5 text-[#7a8492]">
+                          {product.description}
+                        </p>
+                      )}
+
+
+                      {/* =================================
+                          PRICE / CART
+                      ================================= */}
+
+                      <div className="mt-5 flex items-center justify-between border-t border-[#e8ecef] pt-4">
+
+                        <div>
+
+                          <span className="block text-[10px] uppercase tracking-[1.5px] text-[#98a2b3]">
+                            Price
+                          </span>
+
+                          <span className="mt-1 block text-xl font-bold text-[#17253d]">
+                            ${product.price}
+                          </span>
+
+                        </div>
+
+
+                        {/* Add button */}
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleAddToCart(product)
+                          }
+                          className="
+                            group/cart
+                            flex
+                            items-center
+                            gap-2
+                            rounded-full
+                            bg-[#17253d]
+                            px-4
+                            py-3
+                            text-xs
+                            font-bold
+                            text-white
+                            transition-all
+                            duration-300
+                            hover:bg-[#087fd3]
+                            active:scale-95
+                          "
+                        >
+
+                          <ShoppingCart
+                            size={15}
+                            className="transition-transform duration-300 group-hover/cart:-translate-y-0.5"
+                          />
+
+                          <span className="hidden sm:inline">
+                            Add
+                          </span>
+
+                          <Plus
+                            size={13}
+                            className="opacity-70"
+                          />
+
+                        </button>
+
+                      </div>
+
+                    </div>
+
+                  </article>
+                );
+              })}
 
             </div>
           )}
 
 
-        {/* ========================================
-            VIEW ALL PRODUCTS
-        ========================================= */}
+        {/* =================================================
+            VIEW ALL
+        ================================================= */}
 
         {!loading &&
           !error &&
           products.length > 0 && (
 
-            <div className="mt-12 text-center">
+            <div className="mt-16 flex flex-col items-center">
+
+              <p className="mb-4 text-center text-xs uppercase tracking-[2px] text-[#98a2b3]">
+                Can't decide? Explore them all.
+              </p>
 
               <Link
                 to="/services"
                 className="
+                  group
                   inline-flex
                   items-center
-                  gap-2
+                  gap-3
                   rounded-full
-                  bg-[#087fd3]
+                  border
+                  border-[#17253d]
+                  bg-transparent
                   px-7
-                  py-3
+                  py-3.5
                   text-sm
                   font-bold
-                  text-white
-                  shadow-[0_5px_15px_rgba(0,100,180,0.25)]
+                  text-[#17253d]
                   transition-all
                   duration-300
-                  hover:-translate-y-1
-                  hover:bg-[#066db8]
+                  hover:bg-[#17253d]
+                  hover:text-white
                 "
               >
-                View All Products
 
-                <ArrowRight size={17} />
+                View all products
+
+                <ArrowRight
+                  size={16}
+                  className="transition-transform duration-300 group-hover:translate-x-1"
+                />
 
               </Link>
 

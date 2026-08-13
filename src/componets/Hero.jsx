@@ -70,9 +70,9 @@ const Hero = () => {
                 font-['Bebas_Neue']
                 text-5xl
                 leading-[0.85]
-                tracking-[1px]
+                tracking-[2px]
                 text-[#10284B]
-                font-bold
+                font-[600]
                 sm:text-6xl
 
                 md:text-7xl
