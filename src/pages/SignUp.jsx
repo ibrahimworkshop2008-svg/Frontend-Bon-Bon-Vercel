@@ -66,7 +66,9 @@ const SignUp = () => {
       if (!res.data.success) {
         throw new Error(
           res.data.message || "Registration failed"
+          
         );
+        return;
       }
 
       // Go to email verification

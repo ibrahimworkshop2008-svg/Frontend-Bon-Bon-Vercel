@@ -72,7 +72,7 @@ const Hero = () => {
                 leading-[0.85]
                 tracking-[1px]
                 text-[#10284B]
-
+                font-bold
                 sm:text-6xl
 
                 md:text-7xl

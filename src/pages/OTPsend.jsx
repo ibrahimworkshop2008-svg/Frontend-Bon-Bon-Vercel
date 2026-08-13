@@ -10,6 +10,8 @@ const OTPsend = () => {
   const location = useLocation();
 
   const email = location.state?.email || "";
+  
+  
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
 
