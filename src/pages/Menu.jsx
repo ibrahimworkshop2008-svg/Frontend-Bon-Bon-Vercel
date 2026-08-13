@@ -96,16 +96,15 @@ const Menu = () => {
           <div className="max-w-2xl">
 
             <div className="mb-4 flex items-center gap-3">
-              <span className="h-[1px] w-8 bg-[#087fd3]" />
 
-              <p className="text-[11px] font-bold uppercase tracking-[3px] text-[#087fd3]">
+              <p className="text-[13px] font-bold uppercase tracking-[3px] text-[#087fd3]">
                 Freshly made
               </p>
             </div>
 
-            <h2 className="font-serif text-4xl leading-[1.05] tracking-tight text-[#17253d] sm:text-5xl lg:text-6xl">
+            <h2 className="font-['Bebas_Neue'] text-4xl leading-[1.05] tracking-tight text-[#17253d] sm:text-5xl lg:text-6xl">
               Something sweet
-              <span className="block italic font-normal text-[#087fd3]">
+              <span className="block font-normal text-[#087fd3]">
                 for every mood.
               </span>
             </h2>
@@ -245,7 +244,7 @@ const Menu = () => {
                         PRODUCT IMAGE
                     ==================================== */}
 
-                    <div className="relative overflow-hidden rounded-[28px] bg-[#f1f7fa]">
+                    <div className="relative overflow-hidden rounded-[28px] bg-white">
 
                       {/* Product number */}
 

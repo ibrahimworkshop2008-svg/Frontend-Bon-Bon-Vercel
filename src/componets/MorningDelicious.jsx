@@ -109,9 +109,8 @@ const MorningDelicious = () => {
 
             <div className="mb-4 flex items-center gap-3">
 
-              <span className="h-px w-8 bg-[#087fd3]" />
 
-              <span className="text-[10px] font-bold uppercase tracking-[3px] text-[#087fd3]">
+              <span className="text-[12px] font-bold uppercase tracking-[3px] text-[#087fd3]">
                 Fresh every morning
               </span>
 
