@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import api from "../api/axiosInstance";
+import toast from "react-hot-toast";
+
 import {
   MapPin,
   Phone,
@@ -8,10 +10,8 @@ import {
   MessageCircle,
   Loader2,
 } from "lucide-react";
-import {
-  FaInstagram,
-  FaFacebookF,
-} from "react-icons/fa";
+
+import { FaInstagram, FaFacebookF } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 
 const Contact = () => {
@@ -27,12 +27,10 @@ const Contact = () => {
   });
 
   // ==========================================
-  // UI STATES
+  // LOADING STATE
   // ==========================================
 
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
 
   // ==========================================
   // HANDLE INPUT CHANGE
@@ -54,27 +52,29 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Prevent multiple submissions
+    if (loading) return;
+
     setLoading(true);
-    setSuccess("");
-    setError("");
 
     try {
-      const response = await axios.post(
-        "/user/message",
-        {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          message: formData.message,
-        }
-      );
+      const response = await api.post("/user/message", {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        message: formData.message.trim(),
+      });
 
       console.log("Message response:", response.data);
 
       if (response.data.success) {
-        setSuccess(
+        // SUCCESS TOAST
+        toast.success(
           response.data.message ||
-            "Your message has been sent successfully!"
+            "Your message has been sent successfully!",
+          {
+            duration: 4000,
+          }
         );
 
         // Clear form
@@ -84,13 +84,21 @@ const Contact = () => {
           phone: "",
           message: "",
         });
+      } else {
+        toast.error(
+          response.data.message ||
+            "Unable to send your message."
+        );
       }
     } catch (err) {
       console.error("Contact form error:", err);
 
-      setError(
+      toast.error(
         err.response?.data?.message ||
-          "Something went wrong. Please try again."
+          "Something went wrong. Please try again.",
+        {
+          duration: 4000,
+        }
       );
     } finally {
       setLoading(false);
@@ -103,8 +111,7 @@ const Contact = () => {
 
   const phoneNumber = "+923233278821";
 
-  const whatsappUrl =
-    "https://wa.me/923233278821";
+  const whatsappUrl = "https://wa.me/923233278821";
 
   const mapUrl =
     "https://www.google.com/maps/search/?api=1&query=Lahore+Pakistan";
@@ -187,9 +194,9 @@ const Contact = () => {
               lg:text-6xl
             "
           >
-            CONTACT
+            CONTACT{" "}
             <span className="text-[#087fd3]">
-              {" "}US
+              US
             </span>
           </h1>
 
@@ -211,7 +218,6 @@ const Contact = () => {
 
         </div>
       </div>
-
 
       {/* =========================================
           CONTACT CONTENT
@@ -288,10 +294,7 @@ const Contact = () => {
               to contact us. Our team will be happy to help.
             </p>
 
-
-            {/* =====================================
-                PHONE
-            ====================================== */}
+            {/* PHONE */}
 
             <a
               href={`tel:${phoneNumber}`}
@@ -354,10 +357,7 @@ const Contact = () => {
 
             </a>
 
-
-            {/* =====================================
-                WHATSAPP
-            ====================================== */}
+            {/* WHATSAPP */}
 
             <a
               href={whatsappUrl}
@@ -422,10 +422,7 @@ const Contact = () => {
 
             </a>
 
-
-            {/* =====================================
-                LOCATION
-            ====================================== */}
+            {/* LOCATION */}
 
             <a
               href={mapUrl}
@@ -490,10 +487,7 @@ const Contact = () => {
 
             </a>
 
-
-            {/* =====================================
-                OPENING HOURS
-            ====================================== */}
+            {/* OPENING HOURS */}
 
             <div
               className="
@@ -549,7 +543,6 @@ const Contact = () => {
 
           </div>
 
-
           {/* =======================================
               RIGHT SIDE - FORM
           ======================================== */}
@@ -586,58 +579,7 @@ const Contact = () => {
               as soon as possible.
             </p>
 
-
-            {/* =====================================
-                SUCCESS MESSAGE
-            ====================================== */}
-
-            {success && (
-              <div
-                className="
-                  mt-5
-                  rounded-xl
-                  border
-                  border-green-200
-                  bg-green-50
-                  px-4
-                  py-3
-                  text-sm
-                  font-medium
-                  text-green-600
-                "
-              >
-                {success}
-              </div>
-            )}
-
-
-            {/* =====================================
-                ERROR MESSAGE
-            ====================================== */}
-
-            {error && (
-              <div
-                className="
-                  mt-5
-                  rounded-xl
-                  border
-                  border-red-200
-                  bg-red-50
-                  px-4
-                  py-3
-                  text-sm
-                  font-medium
-                  text-red-600
-                "
-              >
-                {error}
-              </div>
-            )}
-
-
-            {/* =====================================
-                FORM
-            ====================================== */}
+            {/* FORM */}
 
             <form
               onSubmit={handleSubmit}
@@ -690,7 +632,6 @@ const Contact = () => {
 
               </div>
 
-
               {/* EMAIL */}
 
               <div>
@@ -736,7 +677,6 @@ const Contact = () => {
                 />
 
               </div>
-
 
               {/* PHONE */}
 
@@ -784,7 +724,6 @@ const Contact = () => {
 
               </div>
 
-
               {/* MESSAGE / REVIEW */}
 
               <div>
@@ -831,7 +770,6 @@ const Contact = () => {
                 />
 
               </div>
-
 
               {/* SUBMIT BUTTON */}
 
@@ -885,7 +823,6 @@ const Contact = () => {
         </div>
 
       </div>
-
 
       {/* =========================================
           QUICK CONTACT
@@ -963,7 +900,6 @@ const Contact = () => {
         </div>
 
       </div>
-
 
       {/* =========================================
           SOCIAL ICONS
