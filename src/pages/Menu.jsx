@@ -244,7 +244,7 @@ const Menu = () => {
                         PRODUCT IMAGE
                     ==================================== */}
 
-                    <div className="relative overflow-hidden rounded-[28px] bg-white">
+                    <div className="relative overflow-hidden rounded-[28px] bg-[#f5f5f5]">
 
                       {/* Product number */}
 
