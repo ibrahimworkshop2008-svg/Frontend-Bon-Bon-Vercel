@@ -1,27 +1,12 @@
 import React from "react";
-import {
-  Truck,
-  CircleDot,
-  CreditCard,
-} from "lucide-react";
+
+import Image1 from "../assets/Image1.png";
+import Image2 from "../assets/Image2.png";
+import Image3 from "../assets/Image3.png";
 
 const OurStory = () => {
   return (
     <section className="relative w-full overflow-hidden bg-white py-16 lg:py-20">
-      
-      {/* Decorative blue circle */}
-      <div
-        className="
-          absolute
-          -bottom-44
-          left-[18%]
-          w-[360px]
-          h-[360px]
-          rounded-full
-          bg-[#cceeff]
-          opacity-90
-        "
-      />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 lg:px-10">
 
@@ -77,25 +62,18 @@ const OurStory = () => {
                   shrink-0
                   w-16
                   h-16
+                  rounded-full
+                  bg-[#cceeff]
                   flex
                   items-center
                   justify-center
+                  overflow-hidden
                 "
               >
-                <div
-                  className="
-                    absolute
-                    w-14
-                    h-14
-                    rounded-full
-                    bg-[#cceeff]
-                  "
-                />
-
-                <Truck
-                  size={39}
-                  strokeWidth={2.2}
-                  className="relative z-10 text-[#17253d]"
+                <img
+                  src={Image1}
+                  alt="Fast Delivery"
+                  className="w-12 h-12 object-contain"
                 />
               </div>
 
@@ -120,25 +98,18 @@ const OurStory = () => {
                   shrink-0
                   w-16
                   h-16
+                  rounded-full
+                  bg-[#cceeff]
                   flex
                   items-center
                   justify-center
+                  overflow-hidden
                 "
               >
-                <div
-                  className="
-                    absolute
-                    w-14
-                    h-14
-                    rounded-full
-                    bg-[#cceeff]
-                  "
-                />
-
-                <CircleDot
-                  size={39}
-                  strokeWidth={2}
-                  className="relative z-10 text-[#17253d]"
+                <img
+                  src={Image2}
+                  alt="Natural Ingredients"
+                  className="w-12 h-12 object-contain"
                 />
               </div>
 
@@ -164,25 +135,18 @@ const OurStory = () => {
                   shrink-0
                   w-16
                   h-16
+                  rounded-full
+                  bg-[#cceeff]
                   flex
                   items-center
                   justify-center
+                  overflow-hidden
                 "
               >
-                <div
-                  className="
-                    absolute
-                    w-14
-                    h-14
-                    rounded-full
-                    bg-[#cceeff]
-                  "
-                />
-
-                <CreditCard
-                  size={39}
-                  strokeWidth={2}
-                  className="relative z-10 text-[#17253d]"
+                <img
+                  src={Image3}
+                  alt="Secure Payment"
+                  className="w-12 h-12 object-contain"
                 />
               </div>
 
@@ -201,7 +165,6 @@ const OurStory = () => {
             </div>
 
           </div>
-
         </div>
       </div>
     </section>

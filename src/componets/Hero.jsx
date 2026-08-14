@@ -14,23 +14,23 @@ const Hero = () => {
   const navigate = useNavigate()
   return (
     <section
-      className="
-        relative
-        min-h-[530px]
-        w-full
-        overflow-hidden
-        bg-cover
-        bg-center
-        bg-no-repeat
-        
+     className="
+    relative
+    h-[800px]
+    w-full
+    overflow-hidden
+    bg-fill
+    bg-right
+    bg-no-repeat
 
-        sm:min-h-[500px]
-        md:min-h-[550px]
-        lg:min-h-[650px]
-      "
-      style={{
-        backgroundImage: `url(${heroBg})`,
-      }}
+    sm:h-[800px]
+    sm:bg-center
+    md:h-[650px]
+    lg:h-[650px]
+  "
+  style={{
+    backgroundImage: `url(${heroBg})`,
+  }}
     >
       {/* ================= CONTENT ================= */}
 
