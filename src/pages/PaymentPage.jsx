@@ -116,12 +116,12 @@ export default function CheckoutPage() {
       })),
 
 
-       shippingAddress: {
-        fullName: firstName,
-        address,
-        city,
-        phone,
-      },
+     shippingAddress: {
+  fullName: `${firstName} ${lastName}`.trim(),
+  phone: phone.trim(),
+  address: address.trim(),
+  city: city.trim(),
+},
 
       shippingMethod: "local-delivery",
 
