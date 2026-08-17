@@ -67,7 +67,6 @@ const ProductProvider = ({ children }) => {
         JSON.stringify(cartItems)
       );
 
-      // Check immediately
       console.log(
         "Saved cart:",
         localStorage.getItem(CART_STORAGE_KEY)
@@ -132,7 +131,7 @@ const ProductProvider = ({ children }) => {
   };
 
   // ========================================
-  // REMOVE
+  // REMOVE FROM CART
   // ========================================
 
   const removeFromCart = (id) => {
@@ -160,15 +159,20 @@ const ProductProvider = ({ children }) => {
       )
     );
   };
-      // ========================================
+
+  // ========================================
   // CLEAR CART
   // ========================================
-    const clearCart = () => {
-  setCartItems([]);
-  localStorage.removeItem("cartItems");
-};
 
-}
+  const clearCart = () => {
+    setCartItems([]);
+    localStorage.removeItem(CART_STORAGE_KEY);
+    setIsCartOpen(false);
+  };
+
+  // ========================================
+  // PROVIDER
+  // ========================================
 
   return (
     <ProductContext.Provider
@@ -186,7 +190,7 @@ const ProductProvider = ({ children }) => {
       {children}
     </ProductContext.Provider>
   );
-
+};
 
 // ========================================
 // USE CART
