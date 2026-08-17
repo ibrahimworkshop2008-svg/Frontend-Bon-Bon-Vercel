@@ -82,7 +82,10 @@ const Navbar = () => {
       setProfileOpen(false);
       setIsMenuOpen(false);
 
-      localStorage.clear()
+      localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("cartItems");
+
 
       navigate("/");
     } catch (error) {
