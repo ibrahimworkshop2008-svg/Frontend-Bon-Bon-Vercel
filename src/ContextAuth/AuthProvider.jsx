@@ -133,6 +133,8 @@ const AuthProvider = ({ children }) => {
       localStorage.removeItem(
         TOKEN_STORAGE_KEY
       );
+
+      
     }
   };
 

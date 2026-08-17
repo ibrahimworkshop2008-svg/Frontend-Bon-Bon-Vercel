@@ -82,6 +82,8 @@ const Navbar = () => {
       setProfileOpen(false);
       setIsMenuOpen(false);
 
+      localStorage.clear()
+
       navigate("/");
     } catch (error) {
       console.error("Logout failed:", error);
