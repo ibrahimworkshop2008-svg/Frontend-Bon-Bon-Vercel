@@ -150,7 +150,7 @@ export default function CheckoutPage() {
     if (response.data.success) {
       console.log("Order created:", response.data.order);
 
-      // Clear cart
+      // Clear cart=
       clearCart();
 
       // Go to success page
@@ -161,15 +161,17 @@ export default function CheckoutPage() {
       });
     }
   } catch (error) {
-    console.error(
-      "Order placement failed:",
-      error.response?.data || error.message
-    );
+   console.error("ORDER ERROR:", error);
 
-    alert(
-      error.response?.data?.message ||
-        "Something went wrong while placing your order."
-    );
+  console.error("Response:", error.response);
+  console.error("Status:", error.response?.status);
+  console.error("Data:", error.response?.data);
+
+  alert(
+    error.response?.data?.message ||
+      error.message ||
+      "Something went wrong while placing your order."
+  );
   } finally {
     setSubmitting(false);
   }
