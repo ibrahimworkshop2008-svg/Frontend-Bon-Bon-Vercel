@@ -82,9 +82,9 @@ const Navbar = () => {
       setProfileOpen(false);
       setIsMenuOpen(false);
 
-      localStorage.removeItem("user");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("cartItems");
+      
+
+    localStorage.clear()
 
 
       navigate("/");
