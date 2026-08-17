@@ -283,7 +283,7 @@ const Menu = () => {
                         className="relative block"
                       >
 
-                        <div className="flex h-[285px] items-center justify-center overflow-hidden p-7 sm:h-[300px]">
+                        <div className="flex h-full items-center justify-center overflow-hidden p-7 sm:h-full">
 
                           <img
                             src={getProductImage(product)}
@@ -380,7 +380,7 @@ const Menu = () => {
                           </span>
 
                           <span className="mt-1 block text-xl font-bold text-[#17253d]">
-                            ${product.price}
+                            RS.{product.price}
                           </span>
 
                         </div>
