@@ -26,7 +26,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const { user, logout } = useAuth();
-  const { cartItems, setIsCartOpen } = useCart();
+  const { cartItems,  setCartItems,  setIsCartOpen } = useCart();
 
   // =========================================================
   // NAVIGATION LINKS
@@ -85,6 +85,9 @@ const Navbar = () => {
       
 
     localStorage.clear()
+    
+        setCartItems([])
+
 
 
       navigate("/");
