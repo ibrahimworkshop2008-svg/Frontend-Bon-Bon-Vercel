@@ -130,6 +130,8 @@ const AuthProvider = ({ children }) => {
         USER_STORAGE_KEY
       );
 
+      localStorage.removeItem("cartItems")
+
       localStorage.removeItem(
         TOKEN_STORAGE_KEY
       );
