@@ -1159,6 +1159,9 @@ const Navbar = () => {
           {user ? (
 
             <div
+
+            onClick={(e) => e.stopPropagation()}
+
               className="
                 mt-4
 
