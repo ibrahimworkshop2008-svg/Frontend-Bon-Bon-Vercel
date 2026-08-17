@@ -108,7 +108,7 @@ export default function CheckoutPage() {
   try {
     const orderData = {
        items: safeCartItems.map((item) => ({
-        productId: item._id || item.id,
+        product: item._id || item.id,
         name: item.name,
         image: item.image,
         price: Number(item.price),
