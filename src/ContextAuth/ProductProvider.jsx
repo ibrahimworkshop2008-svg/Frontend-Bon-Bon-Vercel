@@ -160,6 +160,7 @@ const ProductProvider = ({ children }) => {
       )
     );
   };
+    };
 
   // ========================================
   // CLEAR CART
@@ -168,7 +169,7 @@ const ProductProvider = ({ children }) => {
   setCartItems([]);
   localStorage.removeItem("cartItems");
 };
-  };
+
 
   return (
     <ProductContext.Provider
