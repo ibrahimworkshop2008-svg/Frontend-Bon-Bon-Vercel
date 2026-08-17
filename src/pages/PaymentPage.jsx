@@ -23,16 +23,20 @@ const PAKISTAN_CITIES = [
   "Quetta",
 ];
 
+
+
 const formatPKR = (n) =>
   `Rs ${Number(n || 0).toLocaleString("en-PK", {
     maximumFractionDigits: 0,
   })}`;
 
+  import axios from "axios";
+import { useNavigate } from "react-router-dom";
    import { Link } from "react-router-dom";
 import logo from "../assets/01_logo_bonbon.png";
 
 export default function CheckoutPage() {
-  const { cartItems } = useCart();
+  const { cartItems,  clearCart } = useCart();
   const { user } = useAuth();
 
   const [email, setEmail] = useState(user?.email || "");
@@ -78,23 +82,30 @@ export default function CheckoutPage() {
 
   const total = subtotal + shipping;
 
-  const handlePayNow = (e) => {
-    e.preventDefault();
+ const handlePayNow = async (e) => {
+  e.preventDefault();
 
-    if (!city) {
-      setCityError("Please select your city.");
-      return;
-    }
+  if (!city) {
+    setCityError("Please select your city.");
+    return;
+  }
 
-    if (safeCartItems.length === 0) {
-      alert("Your cart is empty.");
-      return;
-    }
+  if (safeCartItems.length === 0) {
+    alert("Your cart is empty.");
+    return;
+  }
 
-    setCityError("");
-    setSubmitting(true);
+  if (!user) {
+    alert("Please login before placing an order.");
+    navigate("/login");
+    return;
+  }
 
-    const order = {
+  setCityError("");
+  setSubmitting(true);
+
+  try {
+    const orderData = {
       contact: {
         email,
         newsOptIn,
@@ -113,32 +124,63 @@ export default function CheckoutPage() {
 
       shippingMethod: "local-delivery",
 
-      payment:
-        paymentMethod === "card"
-          ? {
-              method: "card",
-              cardNumber,
-              cardExpiry,
-              cardCvc,
-              cardName,
-              billingSameAsShipping,
-            }
-          : {
-              method: "cod",
-            },
+      payment: {
+        method: paymentMethod,
+        billingSameAsShipping,
+      },
 
-      items: safeCartItems,
+      items: safeCartItems.map((item) => ({
+        productId: item._id || item.id,
+        name: item.name,
+        image: item.image,
+        price: Number(item.price),
+        quantity: Number(item.quantity),
+      })),
+
       subtotal,
       shipping,
       total,
     };
 
-    console.log("Placing order:", order);
+    console.log("Sending order:", orderData);
 
-    setTimeout(() => {
-      setSubmitting(false);
-    }, 1200);
-  };
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_URL}/orders`,
+      orderData,
+      {
+        withCredentials: true,
+      }
+    );
+
+    if (response.data.success) {
+      console.log("Order created:", response.data.order);
+
+      // Clear cart
+      clearCart();
+
+      // Go to success page
+      navigate("/order-success", {
+        state: {
+          order: response.data.order,
+        },
+      });
+    }
+  } catch (error) {
+    console.error(
+      "Order placement failed:",
+      error.response?.data || error.message
+    );
+
+    alert(
+      error.response?.data?.message ||
+        "Something went wrong while placing your order."
+    );
+  } finally {
+    setSubmitting(false);
+  }
+};
+
+  
 
  
 

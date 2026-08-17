@@ -164,9 +164,10 @@ const ProductProvider = ({ children }) => {
   // ========================================
   // CLEAR CART
   // ========================================
-
-  const clearCart = () => {
-    setCartItems([]);
+    const clearCart = () => {
+  setCartItems([]);
+  localStorage.removeItem("cartItems");
+};
   };
 
   return (
