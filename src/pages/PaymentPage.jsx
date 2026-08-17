@@ -117,14 +117,10 @@ export default function CheckoutPage() {
 
 
        shippingAddress: {
-        firstName,
-        lastName,
+        fullName: firstName,
         address,
-        apartment,
         city,
-        postalCode,
         phone,
-        saveInfo,
       },
 
       shippingMethod: "local-delivery",
