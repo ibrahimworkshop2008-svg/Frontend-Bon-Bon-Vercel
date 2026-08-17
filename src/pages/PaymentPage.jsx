@@ -30,7 +30,8 @@ const formatPKR = (n) =>
     maximumFractionDigits: 0,
   })}`;
 
-  import axios from "axios";
+import api from "../api/axiosInstance";
+  
 import { useNavigate } from "react-router-dom";
    import { Link } from "react-router-dom";
 import logo from "../assets/01_logo_bonbon.png";
@@ -144,13 +145,7 @@ export default function CheckoutPage() {
 
     console.log("Sending order:", orderData);
 
-    const response = await axios.post(
-      `${import.meta.env.VITE_API_URL}/orders`,
-      orderData,
-      {
-        withCredentials: true,
-      }
-    );
+      const response = await api.post("/order/orderplace", orderData);
 
     if (response.data.success) {
       console.log("Order created:", response.data.order);
