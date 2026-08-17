@@ -107,12 +107,16 @@ export default function CheckoutPage() {
 
   try {
     const orderData = {
-      contact: {
-        email,
-        newsOptIn,
-      },
+       items: safeCartItems.map((item) => ({
+        productId: item._id || item.id,
+        name: item.name,
+        image: item.image,
+        price: Number(item.price),
+        quantity: Number(item.quantity),
+      })),
 
-      delivery: {
+
+       shippingAddress: {
         firstName,
         lastName,
         address,
@@ -125,18 +129,12 @@ export default function CheckoutPage() {
 
       shippingMethod: "local-delivery",
 
-      payment: {
+       paymentMethod: {
         method: paymentMethod,
         billingSameAsShipping,
       },
 
-      items: safeCartItems.map((item) => ({
-        productId: item._id || item.id,
-        name: item.name,
-        image: item.image,
-        price: Number(item.price),
-        quantity: Number(item.quantity),
-      })),
+     
 
       subtotal,
       shipping,
