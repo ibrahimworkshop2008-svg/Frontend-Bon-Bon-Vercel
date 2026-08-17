@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+
 import {
   ShoppingCart,
   MapPin,
@@ -15,6 +16,7 @@ import {
 
 import { useAuth } from "../ContextAuth/AuthProvider";
 import { useCart } from "../ContextAuth/ProductProvider";
+
 import logo from "../assets/01_logo_bonbon.png";
 
 const Navbar = () => {
@@ -24,7 +26,6 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const { user, logout } = useAuth();
-
   const { cartItems, setIsCartOpen } = useCart();
 
   // =========================================================
@@ -32,27 +33,25 @@ const Navbar = () => {
   // =========================================================
 
   const navLinks = [
-    {
-      name: "Home",
-      path: "/",
-    },
-    {
-      name: "About Us",
-      path: "/about",
-    },
-    {
-      name: "Menu",
-      path: "/menu",
-    },
-    {
-      name: "Delivery & Payment",
-      path: "/payment",
-    },
-    {
-      name: "Contact",
-      path: "/contact",
-    },
+    { name: "Home", path: "/" },
+    { name: "About Us", path: "/about" },
+    { name: "Menu", path: "/menu" },
+    { name: "Delivery & Payment", path: "/payment" },
+    { name: "Contact", path: "/contact" },
   ];
+
+  // =========================================================
+  // USER INITIALS
+  // =========================================================
+
+  const initials = user?.name
+    ? user.name
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map((word) => word.charAt(0).toUpperCase())
+        .join("")
+    : "U";
 
   // =========================================================
   // CLOSE MOBILE MENU
@@ -67,13 +66,8 @@ const Navbar = () => {
   // =========================================================
 
   const openCart = () => {
-    // Close mobile menu first
     setIsMenuOpen(false);
-
-    // Close profile dropdown
     setProfileOpen(false);
-
-    // Open cart
     setIsCartOpen(true);
   };
 
@@ -82,23 +76,27 @@ const Navbar = () => {
   // =========================================================
 
   const handleLogout = async () => {
-    await logout();
+    try {
+      await logout();
 
-    setProfileOpen(false);
-    setIsMenuOpen(false);
+      setProfileOpen(false);
+      setIsMenuOpen(false);
 
-    navigate("/");
+      navigate("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   // =========================================================
-  // CLOSE MENU WHEN SCROLLING
+  // CLOSE MENU ON SCROLL
   // =========================================================
 
   useEffect(() => {
+    if (!isMenuOpen) return;
+
     const handleScroll = () => {
-      if (isMenuOpen) {
-        setIsMenuOpen(false);
-      }
+      setIsMenuOpen(false);
     };
 
     window.addEventListener("scroll", handleScroll, {
@@ -111,7 +109,7 @@ const Navbar = () => {
   }, [isMenuOpen]);
 
   // =========================================================
-  // CLOSE MENU WITH ESCAPE KEY
+  // ESCAPE KEY
   // =========================================================
 
   useEffect(() => {
@@ -130,7 +128,7 @@ const Navbar = () => {
   }, []);
 
   // =========================================================
-  // LOCK BODY SCROLL WHEN MOBILE MENU OPEN
+  // BODY SCROLL LOCK
   // =========================================================
 
   useEffect(() => {
@@ -145,38 +143,8 @@ const Navbar = () => {
     };
   }, [isMenuOpen]);
 
-  const initials = user?.name
-  ? user.name
-      .trim()
-      .split(/\s+/)
-      .slice(0, 2)
-      .map(word => word[0].toUpperCase())
-      .join("")
-  : "";
-
-console.log(initials);
-
   return (
     <>
-      {/* =====================================================
-          MOBILE BACKDROP
-      ====================================================== */}
-
-      {isMenuOpen && (
-        <div
-          onClick={closeMenu}
-          className="
-            fixed
-            inset-0
-            z-[90]
-            bg-[#10284B]/30
-            backdrop-blur-[3px]
-            lg:hidden
-          "
-          aria-hidden="true"
-        />
-      )}
-
       {/* =====================================================
           NAVBAR
       ====================================================== */}
@@ -189,16 +157,16 @@ console.log(initials);
           w-full
           border-b
           border-blue-50
-          bg-white/95
-          shadow-[0_2px_15px_rgba(16,40,75,0.04)]
-          backdrop-blur-md
+          bg-white/90
+          shadow-[0_4px_25px_rgba(16,40,75,0.06)]
+          backdrop-blur-xl
         "
       >
         <nav className="relative w-full">
 
-          {/* =====================================================
+          {/* =================================================
               MAIN NAVBAR
-          ====================================================== */}
+          ================================================= */}
 
           <div
             className="
@@ -211,16 +179,17 @@ console.log(initials);
               gap-3
               px-4
               py-2.5
+
               sm:min-h-[78px]
               sm:px-6
-              lg:px-5
-              xl:px-7
+              lg:px-8
+              xl:px-10
             "
           >
 
             {/* =================================================
                 LOGO
-            ================================================== */}
+            ================================================= */}
 
             <Link
               to="/"
@@ -244,20 +213,21 @@ console.log(initials);
                   object-contain
                   transition-transform
                   duration-300
-                  group-hover:scale-[1.03]
-                  sm:h-14
+                  group-hover:scale-105
+
+                  sm:h-13
+                  lg:h-14
                 "
               />
             </Link>
 
             {/* =================================================
                 DESKTOP NAVIGATION
-            ================================================== */}
+            ================================================= */}
 
             <ul
               className="
                 hidden
-                shrink
                 items-center
                 gap-4
                 lg:flex
@@ -266,27 +236,28 @@ console.log(initials);
               "
             >
               {navLinks.map((link) => (
-                <li
-                  key={link.path}
-                  className="shrink-0"
-                >
+                <li key={link.path}>
                   <NavLink
                     to={link.path}
-                    className={({ isActive }) =>
-                      `
+                    className={({ isActive }) => `
+                      group
                       relative
                       whitespace-nowrap
+
                       font-['Bebas_Neue']
                       text-[13px]
-                      font-[500]
+                      font-medium
+                      tracking-wide
+
                       transition-colors
-                      duration-200
+                      duration-300
+
                       xl:text-sm
 
                       ${
                         isActive
-                          ? "text-blue-500"
-                          : "text-[#172B4D] hover:text-blue-500"
+                          ? "text-[#0879D1]"
+                          : "text-[#172B4D] hover:text-[#0879D1]"
                       }
 
                       after:absolute
@@ -295,17 +266,17 @@ console.log(initials);
                       after:h-[2px]
                       after:-translate-x-1/2
                       after:rounded-full
-                      after:bg-blue-500
+                      after:bg-[#0879D1]
+
                       after:transition-all
                       after:duration-300
 
                       ${
                         isActive
                           ? "after:w-full"
-                          : "after:w-0 hover:after:w-full"
+                          : "after:w-0 group-hover:after:w-full"
                       }
-                      `
-                    }
+                    `}
                   >
                     {link.name}
                   </NavLink>
@@ -315,7 +286,7 @@ console.log(initials);
 
             {/* =================================================
                 DESKTOP RIGHT SIDE
-            ================================================== */}
+            ================================================= */}
 
             <div
               className="
@@ -339,24 +310,24 @@ console.log(initials);
                     h-9
                     w-9
                     items-center
-                    justify-end
+                    justify-center
                     rounded-full
+                    bg-blue-50
                   "
                 >
                   <MapPin
-                    size={20}
-                    className="text-black"
+                    size={18}
+                    className="text-[#0879D1]"
                   />
                 </div>
 
                 <div
                   className="
                     whitespace-nowrap
+                    font-['Bebas_Neue']
                     text-[12px]
-                      font-['Bebas_Neue']
-                    
                     leading-tight
-                    text-black
+                    text-[#172B4D]
                     xl:text-[13px]
                   "
                 >
@@ -364,7 +335,7 @@ console.log(initials);
                     Lahore, Pakistan
                   </p>
 
-                  <p className="text-slate-500">
+                  <p className="text-slate-400">
                     Main Boulevard
                   </p>
                 </div>
@@ -378,19 +349,18 @@ console.log(initials);
                   hidden
                   whitespace-nowrap
                   text-right
-                  text-[12px]
                   font-['Bebas_Neue']
-
+                  text-[12px]
                   leading-tight
                   xl:block
                   xl:text-[13px]
                 "
               >
-                <p className="font-bold text-slate-800">
+                <p className="font-bold text-[#172B4D]">
                   +92 300 555-46-47
                 </p>
 
-                <p className="text-slate-500">
+                <p className="text-slate-400">
                   Mon-Sun: 8am - 10pm
                 </p>
               </div>
@@ -411,22 +381,28 @@ console.log(initials);
                   items-center
                   justify-center
                   rounded-full
-                  border-[1px]
-                  border-blue-400
+                  border
+                  border-blue-200
                   bg-white
+
                   transition-all
-                  duration-200
+                  duration-300
+
                   hover:-translate-y-0.5
-                  hover:bg-blue-500
-                  hover:shadow-md
+                  hover:border-[#0879D1]
+                  hover:bg-[#0879D1]
+                  hover:shadow-lg
                   hover:shadow-blue-100
+
+                  active:scale-95
                 "
               >
                 <ShoppingCart
-                  size={19}
+                  size={18}
                   className="
-                    text-blue-500
+                    text-[#0879D1]
                     transition-colors
+                    duration-300
                     group-hover:text-white
                   "
                 />
@@ -442,7 +418,7 @@ console.log(initials);
                     items-center
                     justify-center
                     rounded-full
-                    bg-blue-500
+                    bg-[#0879D1]
                     px-1
                     text-[9px]
                     font-bold
@@ -465,19 +441,26 @@ console.log(initials);
                     onClick={() =>
                       setProfileOpen((prev) => !prev)
                     }
+                    aria-expanded={profileOpen}
                     className="
                       flex
                       items-center
                       gap-2
                       rounded-full
                       border
-                      border-blue-400
+                      border-blue-200
                       bg-white
-                      
                       py-1
-                      transition
-                      hover:bg-blue-100
-                      xl:px-3
+                      pl-1
+                      pr-2
+
+                      transition-all
+                      duration-300
+
+                      hover:border-blue-300
+                      hover:bg-blue-50
+
+                      xl:pr-3
                     "
                   >
 
@@ -490,11 +473,14 @@ console.log(initials);
                         items-center
                         justify-center
                         rounded-full
-                        bg-blue-500
-                        text-white mr-3
+                        bg-[#0879D1]
+                        text-xs
+                        font-bold
+                        text-white
+                        shadow-sm
                       "
                     >
-                     <h1>{initials}</h1>
+                      {initials}
                     </div>
 
                     <div className="hidden text-left 2xl:block">
@@ -515,11 +501,13 @@ console.log(initials);
                         hidden
                         text-[#172B4D]
                         transition-transform
+                        duration-300
                         xl:block
+
                         ${
                           profileOpen
                             ? "rotate-180"
-                            : ""
+                            : "rotate-0"
                         }
                       `}
                     />
@@ -540,8 +528,9 @@ console.log(initials);
                         rounded-2xl
                         border
                         border-blue-100
-                        bg-white
-                        shadow-2xl
+                        bg-white/95
+                        shadow-[0_20px_50px_rgba(16,40,75,0.15)]
+                        backdrop-blur-xl
                       "
                     >
 
@@ -558,7 +547,7 @@ console.log(initials);
                               items-center
                               justify-center
                               rounded-full
-                              bg-blue-500
+                              bg-[#0879D1]
                               text-white
                             "
                           >
@@ -598,13 +587,14 @@ console.log(initials);
                             text-sm
                             font-medium
                             text-[#172B4D]
-                            transition
+                            transition-all
+                            duration-200
                             hover:bg-blue-50
-                            hover:text-blue-500
+                            hover:text-[#0879D1]
                           "
                         >
                           <User size={18} />
-                          <span>My Profile</span>
+                          My Profile
                         </Link>
 
                         <button
@@ -622,38 +612,44 @@ console.log(initials);
                             text-sm
                             font-medium
                             text-red-500
-                            transition
+                            transition-all
+                            duration-200
                             hover:bg-red-50
                           "
                         >
                           <LogOut size={18} />
-                          <span>Logout</span>
+                          Logout
                         </button>
 
                       </div>
+
                     </div>
                   )}
 
                 </div>
               ) : (
+
                 <Link
                   to="/login"
                   className="
                     whitespace-nowrap
                     rounded-full
-                    bg-blue-500
+                    bg-[#0879D1]
                     px-4
                     py-2
                     text-xs
                     font-semibold
                     text-white
                     shadow-md
-                    shadow-blue-200
+                    shadow-blue-100
+
                     transition-all
-                    duration-200
+                    duration-300
+
                     hover:-translate-y-0.5
-                    hover:bg-blue-600
+                    hover:bg-[#066DB8]
                     hover:shadow-lg
+
                     xl:px-5
                     xl:py-2.5
                     xl:text-sm
@@ -661,13 +657,14 @@ console.log(initials);
                 >
                   Login
                 </Link>
+
               )}
 
             </div>
 
             {/* =================================================
                 MOBILE RIGHT SIDE
-            ================================================== */}
+            ================================================= */}
 
             <div
               className="
@@ -697,17 +694,21 @@ console.log(initials);
                   border
                   border-blue-100
                   bg-blue-50
+
                   transition-all
-                  duration-200
+                  duration-300
+
+                  hover:bg-blue-100
                   active:scale-95
                 "
               >
                 <ShoppingCart
-                  size={20}
+                  size={19}
                   className="
-                    text-blue-500
+                    text-[#0879D1]
                     transition-transform
-                    group-hover:scale-105
+                    duration-300
+                    group-hover:scale-110
                   "
                 />
 
@@ -722,7 +723,7 @@ console.log(initials);
                     items-center
                     justify-center
                     rounded-full
-                    bg-blue-500
+                    bg-[#0879D1]
                     px-1
                     text-[9px]
                     font-bold
@@ -743,6 +744,12 @@ console.log(initials);
                   setIsMenuOpen((prev) => !prev);
                   setProfileOpen(false);
                 }}
+                aria-label={
+                  isMenuOpen
+                    ? "Close menu"
+                    : "Open menu"
+                }
+                aria-expanded={isMenuOpen}
                 className={`
                   flex
                   h-10
@@ -750,571 +757,753 @@ console.log(initials);
                   items-center
                   justify-center
                   rounded-full
-                  bg-blue-500
                   text-white
                   shadow-md
                   shadow-blue-100
                   transition-all
                   duration-300
                   active:scale-95
+
                   ${
                     isMenuOpen
-                      ? "rotate-0 bg-[#172B4D]"
-                      : ""
+                      ? "bg-[#172B4D]"
+                      : "bg-[#0879D1] hover:bg-[#066DB8]"
                   }
                 `}
-                aria-label={
-                  isMenuOpen
-                    ? "Close menu"
-                    : "Open menu"
-                }
-                aria-expanded={isMenuOpen}
               >
                 {isMenuOpen ? (
-                  <X
-                    size={23}
-                    className="animate-in"
-                  />
+                  <X size={22} />
                 ) : (
-                  <Menu size={23} />
+                  <Menu size={22} />
                 )}
               </button>
 
             </div>
 
           </div>
+        </nav>
+      </header>
 
-          {/* =====================================================
-              MOBILE MENU DRAWER
-          ====================================================== */}
+      {/* =====================================================
+          MOBILE OVERLAY
+          IMPORTANT: OUTSIDE HEADER
+      ====================================================== */}
 
-          <div
-            className={`
-              fixed
-              left-0
-              right-0
-              top-[73px]
-              z-[110]
-              px-3
-              transition-all
-              duration-300
-              sm:top-[78px]
-              lg:hidden
+      <div
+        className={`
+          fixed
+          inset-0
+          z-[150]
+          lg:hidden
 
-              ${
-                isMenuOpen
-                  ? "visible translate-y-0 opacity-100"
-                  : "pointer-events-none invisible -translate-y-3 opacity-0"
-              }
-            `}
-          >
+          bg-[#10284B]/35
+          backdrop-blur-[5px]
+
+          transition-all
+          duration-500
+
+          ${
+            isMenuOpen
+              ? "visible opacity-100"
+              : "pointer-events-none invisible opacity-0"
+          }
+        `}
+        onClick={closeMenu}
+        aria-hidden="true"
+      />
+
+      {/* =====================================================
+          MOBILE SIDE DRAWER
+          IMPORTANT: OUTSIDE HEADER
+      ====================================================== */}
+
+      <aside
+        className={`
+          fixed
+          left-0
+          top-0
+          z-[200]
+
+          flex
+          h-[100dvh]
+          w-[88%]
+          max-w-[390px]
+          flex-col
+
+          overflow-hidden
+
+          rounded-r-[34px]
+
+          border-r
+          border-white/80
+
+          bg-white/95
+
+          shadow-[20px_0_70px_rgba(16,40,75,0.25)]
+
+          backdrop-blur-2xl
+          backdrop-saturate-150
+
+          lg:hidden
+
+          transition-transform
+          duration-500
+          ease-[cubic-bezier(0.22,1,0.36,1)]
+
+          ${
+            isMenuOpen
+              ? "translate-x-0"
+              : "-translate-x-full"
+          }
+        `}
+        aria-hidden={!isMenuOpen}
+      >
+
+        {/* =================================================
+            DRAWER HEADER
+        ================================================= */}
+
+        <div
+          className="
+            flex
+            shrink-0
+            items-center
+            justify-between
+
+            border-b
+            border-blue-50
+
+            bg-[#EFF8FF]/95
+
+            px-4
+            py-4
+
+            shadow-sm
+
+            backdrop-blur-xl
+          "
+        >
+
+          <div className="flex min-w-0 items-center gap-3">
 
             <div
               className="
-                mx-auto
-                max-h-[calc(100vh-90px)]
-                max-w-lg
-                overflow-y-auto
-                rounded-3xl
+                flex
+                h-11
+                w-11
+                shrink-0
+                items-center
+                justify-center
+
+                rounded-full
+
                 border
-                border-blue-100
+                border-white
+
                 bg-white
-                p-3
-                shadow-[0_20px_60px_rgba(16,40,75,0.18)]
+
+                shadow-[0_5px_15px_rgba(16,40,75,0.08)]
               "
             >
-
-              {/* =================================================
-                  MENU HEADER
-              ================================================== */}
-
-              <div
-                className="
-                  mb-2
-                  flex
-                  items-center
-                  justify-between
-                  rounded-2xl
-                  bg-[#EFF8FF]
-                  px-4
-                  py-3
-                "
-              >
-
-                <div className="flex items-center gap-3">
-
-                  <div
-                    className="
-                      flex
-                      h-10
-                      w-10
-                      items-center
-                      justify-center
-                      rounded-full
-                      bg-white
-                      shadow-sm
-                    "
-                  >
-                    <img
-                      src={logo}
-                      alt="Bon Bon"
-                      className="h-7 w-auto object-contain"
-                    />
-                  </div>
-
-                  <div>
-                    <p className="text-sm font-extrabold text-[#172B4D]">
-                      Bon Bon Donuts
-                    </p>
-
-                    <p className="text-[11px] text-slate-500">
-                      Fresh & delicious every day
-                    </p>
-                  </div>
-
-                </div>
-
-                <button
-                  type="button"
-                  onClick={closeMenu}
-                  className="
-                    flex
-                    h-9
-                    w-9
-                    items-center
-                    justify-center
-                    rounded-full
-                    bg-white
-                    text-slate-500
-                    shadow-sm
-                    transition
-                    hover:text-blue-500
-                  "
-                  aria-label="Close menu"
-                >
-                  <X size={18} />
-                </button>
-
-              </div>
-
-              {/* =================================================
-                  NAVIGATION
-              ================================================== */}
-
-              <ul className="space-y-1">
-
-                {navLinks.map((link, index) => (
-                  <li key={link.path}>
-
-                    <NavLink
-                      to={link.path}
-                      onClick={closeMenu}
-                      className={({ isActive }) =>
-                        `
-                        group
-                        flex
-                        items-center
-                        justify-between
-                        rounded-2xl
-                        px-4
-                        py-3.5
-                        transition-all
-                        duration-200
-
-                        ${
-                          isActive
-                            ? "bg-blue-50 text-blue-500"
-                            : "text-[#172B4D] hover:bg-slate-50"
-                        }
-                        `
-                      }
-                    >
-                      <span className="flex items-center gap-3">
-
-                        <span
-                          className="
-                            flex
-                            h-8
-                            w-8
-                            items-center
-                            justify-center
-                            rounded-full
-                            bg-slate-50
-                            text-[11px]
-                            font-bold
-                            text-slate-400
-                            group-hover:bg-blue-100
-                            group-hover:text-blue-500
-                          "
-                        >
-                          0{index + 1}
-                        </span>
-
-                        <span
-                          className="
-                            font-['Bebas_Neue']
-                            text-base
-                            font-bold
-                            tracking-wide
-                          "
-                        >
-                          {link.name}
-                        </span>
-
-                      </span>
-
-                      <ArrowRight
-                        size={17}
-                        className="
-                          text-slate-300
-                          transition-transform
-                          duration-200
-                          group-hover:translate-x-1
-                          group-hover:text-blue-500
-                        "
-                      />
-
-                    </NavLink>
-
-                  </li>
-                ))}
-
-              </ul>
-
-              {/* =================================================
-                  MOBILE CART QUICK ACTION
-              ================================================== */}
-
-              <button
-                type="button"
-                onClick={openCart}
-                className="
-                  mt-3
-                  flex
-                  w-full
-                  items-center
-                  justify-between
-                  rounded-2xl
-                  bg-[#0879D1]
-                  px-4
-                  py-3.5
-                  text-white
-                  shadow-lg
-                  shadow-blue-100
-                  transition
-                  active:scale-[0.98]
-                "
-              >
-
-                <span className="flex items-center gap-3">
-
-                  <span
-                    className="
-                      flex
-                      h-9
-                      w-9
-                      items-center
-                      justify-center
-                      rounded-full
-                      bg-white/15
-                    "
-                  >
-                    <ShoppingCart size={18} />
-                  </span>
-
-                  <span className="text-left">
-
-                    <span className="block text-sm font-bold">
-                      Your Cart
-                    </span>
-
-                    <span className="block text-[11px] text-blue-100">
-                      {cartItems?.length || 0} item
-                      {cartItems?.length === 1
-                        ? ""
-                        : "s"}{" "}
-                      added
-                    </span>
-
-                  </span>
-
-                </span>
-
-                <ArrowRight size={18} />
-
-              </button>
-
-              {/* =================================================
-                  MOBILE USER
-              ================================================== */}
-
-              {user ? (
-                <div
-                  className="
-                    mt-3
-                    rounded-2xl
-                    border
-                    border-blue-100
-                    bg-white
-                    p-3
-                  "
-                >
-
-                  <div className="flex items-center gap-3">
-
-                    <div
-                      className="
-                        flex
-                        h-11
-                        w-11
-                        shrink-0
-                        items-center
-                        justify-center
-                        rounded-full
-                        bg-blue-500
-                        text-white
-                      "
-                    >
-                      <User size={20} />
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-
-                      <p className="truncate text-sm font-bold text-[#172B4D]">
-                        {user.name || "User"}
-                      </p>
-
-                      <p className="truncate text-xs text-slate-500">
-                        {user.email}
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  <Link
-                    to="/profile"
-                    onClick={closeMenu}
-                    className="
-                      mt-3
-                      flex
-                      w-full
-                      items-center
-                      justify-center
-                      gap-2
-                      rounded-xl
-                      bg-blue-50
-                      py-3
-                      text-sm
-                      font-semibold
-                      text-blue-500
-                      transition
-                      hover:bg-blue-100
-                    "
-                  >
-                    <User size={17} />
-                    My Profile
-                  </Link>
-
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    className="
-                      mt-2
-                      flex
-                      w-full
-                      items-center
-                      justify-center
-                      gap-2
-                      rounded-xl
-                      bg-red-50
-                      py-3
-                      text-sm
-                      font-semibold
-                      text-red-500
-                      transition
-                      hover:bg-red-100
-                    "
-                  >
-                    <LogOut size={17} />
-                    Logout
-                  </button>
-
-                </div>
-              ) : (
-                <Link
-                  to="/login"
-                  onClick={closeMenu}
-                  className="
-                    mt-3
-                    flex
-                    w-full
-                    items-center
-                    justify-center
-                    gap-2
-                    rounded-2xl
-                    bg-blue-500
-                    py-3.5
-                    text-sm
-                    font-bold
-                    text-white
-                    shadow-md
-                    shadow-blue-100
-                    transition
-                    hover:bg-blue-600
-                    active:scale-[0.98]
-                  "
-                >
-                  <User size={18} />
-                  Login / Create Account
-                </Link>
-              )}
-
-              {/* =================================================
-                  LOCATION / CONTACT
-              ================================================== */}
-
-              <div
-                className="
-                  mt-3
-                  grid
-                  grid-cols-1
-                  gap-2
-                  sm:grid-cols-2
-                "
-              >
-
-                {/* Location */}
-
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-3
-                    rounded-2xl
-                    bg-slate-50
-                    p-3
-                  "
-                >
-
-                  <div
-                    className="
-                      flex
-                      h-9
-                      w-9
-                      shrink-0
-                      items-center
-                      justify-center
-                      rounded-full
-                      bg-white
-                      text-blue-500
-                      shadow-sm
-                    "
-                  >
-                    <MapPin size={17} />
-                  </div>
-
-                  <div className="min-w-0">
-
-                    <p className="text-[11px] text-slate-400">
-                      Location
-                    </p>
-
-                    <p className="truncate text-xs font-bold text-[#172B4D]">
-                      Lahore, Pakistan
-                    </p>
-
-                  </div>
-
-                </div>
-
-                {/* Opening hours */}
-
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-3
-                    rounded-2xl
-                    bg-slate-50
-                    p-3
-                  "
-                >
-
-                  <div
-                    className="
-                      flex
-                      h-9
-                      w-9
-                      shrink-0
-                      items-center
-                      justify-center
-                      rounded-full
-                      bg-white
-                      text-blue-500
-                      shadow-sm
-                    "
-                  >
-                    <Clock3 size={17} />
-                  </div>
-
-                  <div>
-
-                    <p className="text-[11px] text-slate-400">
-                      Opening Hours
-                    </p>
-
-                    <p className="text-xs font-bold text-[#172B4D]">
-                      8am - 10pm
-                    </p>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-              {/* Phone */}
-
-              <a
-                href="tel:+923005554647"
-                className="
-                  mt-2
-                  flex
-                  items-center
-                  justify-center
-                  gap-2
-                  rounded-2xl
-                  border
-                  border-blue-100
-                  py-3
-                  text-xs
-                  font-bold
-                  text-[#172B4D]
-                  transition
-                  hover:bg-blue-50
-                  hover:text-blue-500
-                "
-              >
-                <Phone
-                  size={16}
-                  className="text-blue-500"
-                />
-
-                +92 300 555-46-47
-
-              </a>
-
-              {/* Bottom spacing */}
-
-              <div className="h-1" />
+              <img
+                src={logo}
+                alt="Bon Bon Donuts"
+                className="h-7 w-auto object-contain"
+              />
+            </div>
+
+            <div className="min-w-0">
+
+              <p className="truncate text-sm font-extrabold text-[#172B4D]">
+                Bon Bon Donuts
+              </p>
+
+              <p className="truncate text-[11px] text-slate-500">
+                Fresh & delicious every day
+              </p>
 
             </div>
 
           </div>
 
-        </nav>
-      </header>
+          <button
+            type="button"
+            onClick={closeMenu}
+            aria-label="Close menu"
+            className="
+              flex
+              h-9
+              w-9
+              shrink-0
+              items-center
+              justify-center
+
+              rounded-full
+
+              border
+              border-blue-100
+
+              bg-white
+
+              text-slate-500
+
+              shadow-sm
+
+              transition-all
+              duration-300
+
+              hover:rotate-90
+              hover:bg-blue-50
+              hover:text-[#0879D1]
+
+              active:scale-90
+            "
+          >
+            <X size={18} />
+          </button>
+
+        </div>
+
+        {/* =================================================
+            SCROLLABLE CONTENT
+        ================================================= */}
+
+        <div
+          className="
+            flex-1
+            overflow-y-auto
+            overscroll-contain
+
+            px-3
+            py-4
+
+            sm:px-4
+          "
+        >
+
+          {/* =================================================
+              NAVIGATION
+          ================================================= */}
+
+          <nav>
+
+            <p
+              className="
+                mb-2
+                px-2
+
+                font-['Bebas_Neue']
+                text-[11px]
+                font-bold
+                uppercase
+                tracking-[2px]
+
+                text-[#0879D1]
+              "
+            >
+              Navigation
+            </p>
+
+            <ul className="space-y-1.5">
+
+              {navLinks.map((link) => (
+
+                <li key={link.path}>
+
+                  <NavLink
+                    to={link.path}
+                    onClick={closeMenu}
+                    className={({ isActive }) => `
+                      group
+                      relative
+
+                      flex
+                      items-center
+                      justify-between
+
+                      overflow-hidden
+
+                      rounded-2xl
+
+                      px-4
+                      py-3.5
+
+                      font-['Bebas_Neue']
+                      text-base
+                      font-bold
+                      tracking-wide
+
+                      transition-all
+                      duration-300
+
+                      ${
+                        isActive
+                          ? `
+                            translate-x-0
+                            bg-[#0879D1]
+                            text-white
+                            shadow-[0_8px_25px_rgba(8,121,209,0.22)]
+                          `
+                          : `
+                            text-[#172B4D]
+                            hover:translate-x-1
+                            hover:bg-[#EFF8FF]
+                            hover:text-[#0879D1]
+                          `
+                      }
+                    `}
+                  >
+
+                    <span>
+                      {link.name}
+                    </span>
+
+                    <ArrowRight
+                      size={17}
+                      className="
+                        transition-all
+                        duration-300
+
+                        group-hover:translate-x-1
+
+                        group-hover:text-[#0879D1]
+                      "
+                    />
+
+                  </NavLink>
+
+                </li>
+
+              ))}
+
+            </ul>
+
+          </nav>
+
+          {/* =================================================
+              CART
+          ================================================= */}
+
+          <button
+            type="button"
+            onClick={openCart}
+            className="
+              mt-5
+              flex
+              w-full
+              items-center
+              justify-between
+
+              rounded-2xl
+
+              bg-gradient-to-r
+              from-[#0879D1]
+              to-[#066DB8]
+
+              px-4
+              py-3.5
+
+              text-white
+
+              shadow-[0_10px_30px_rgba(8,121,209,0.25)]
+
+              transition-all
+              duration-300
+
+              hover:-translate-y-0.5
+              hover:shadow-[0_15px_35px_rgba(8,121,209,0.30)]
+
+              active:scale-[0.98]
+            "
+          >
+
+            <span className="flex items-center gap-3">
+
+              <span
+                className="
+                  flex
+                  h-9
+                  w-9
+                  items-center
+                  justify-center
+                  rounded-full
+                  bg-white/15
+                "
+              >
+                <ShoppingCart size={18} />
+              </span>
+
+              <span className="text-left">
+
+                <span className="block text-sm font-bold">
+                  Your Cart
+                </span>
+
+                <span className="block text-[11px] text-blue-100">
+                  {cartItems?.length || 0} item
+                  {cartItems?.length === 1 ? "" : "s"} added
+                </span>
+
+              </span>
+
+            </span>
+
+            <ArrowRight size={18} />
+
+          </button>
+
+          {/* =================================================
+              USER
+          ================================================= */}
+
+          {user ? (
+
+            <div
+              className="
+                mt-4
+
+                rounded-2xl
+
+                border
+                border-blue-100
+
+                bg-white/80
+
+                p-3
+
+                shadow-sm
+
+                backdrop-blur-md
+              "
+            >
+
+              <div className="flex items-center gap-3">
+
+                <div
+                  className="
+                    flex
+                    h-11
+                    w-11
+                    shrink-0
+                    items-center
+                    justify-center
+
+                    rounded-full
+
+                    bg-[#0879D1]
+
+                    text-sm
+                    font-bold
+                    text-white
+
+                    shadow-md
+                  "
+                >
+                  {initials}
+                </div>
+
+                <div className="min-w-0 flex-1">
+
+                  <p className="truncate text-sm font-bold text-[#172B4D]">
+                    {user.name || "User"}
+                  </p>
+
+                  <p className="truncate text-xs text-slate-500">
+                    {user.email}
+                  </p>
+
+                </div>
+
+              </div>
+
+              <Link
+                to="/profile"
+                onClick={closeMenu}
+                className="
+                  mt-3
+
+                  flex
+                  w-full
+                  items-center
+                  justify-center
+                  gap-2
+
+                  rounded-xl
+
+                  bg-blue-50
+
+                  py-3
+
+                  text-sm
+                  font-semibold
+                  text-[#0879D1]
+
+                  transition-all
+                  duration-300
+
+                  hover:bg-blue-100
+
+                  active:scale-[0.98]
+                "
+              >
+                <User size={17} />
+                My Profile
+              </Link>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="
+                  mt-2
+
+                  flex
+                  w-full
+                  items-center
+                  justify-center
+                  gap-2
+
+                  rounded-xl
+
+                  bg-red-50
+
+                  py-3
+
+                  text-sm
+                  font-semibold
+                  text-red-500
+
+                  transition-all
+                  duration-300
+
+                  hover:bg-red-100
+
+                  active:scale-[0.98]
+                "
+              >
+                <LogOut size={17} />
+                Logout
+              </button>
+
+            </div>
+
+          ) : (
+
+            <Link
+              to="/login"
+              onClick={closeMenu}
+              className="
+                mt-4
+
+                flex
+                w-full
+                items-center
+                justify-center
+                gap-2
+
+                rounded-2xl
+
+                bg-[#172B4D]
+
+                py-3.5
+
+                text-sm
+                font-bold
+                text-white
+
+                shadow-md
+
+                transition-all
+                duration-300
+
+                hover:bg-[#0879D1]
+
+                active:scale-[0.98]
+              "
+            >
+              <User size={18} />
+              Login / Create Account
+            </Link>
+
+          )}
+
+          {/* =================================================
+              LOCATION + HOURS
+          ================================================= */}
+
+          <div
+            className="
+              mt-4
+              grid
+              grid-cols-1
+              gap-2
+              sm:grid-cols-2
+            "
+          >
+
+            {/* LOCATION */}
+
+            <div
+              className="
+                flex
+                items-center
+                gap-3
+
+                rounded-2xl
+
+                border
+                border-white
+
+                bg-slate-50/90
+
+                p-3
+
+                shadow-sm
+              "
+            >
+
+              <div
+                className="
+                  flex
+                  h-9
+                  w-9
+                  shrink-0
+                  items-center
+                  justify-center
+
+                  rounded-full
+
+                  bg-white
+
+                  text-[#0879D1]
+
+                  shadow-sm
+                "
+              >
+                <MapPin size={17} />
+              </div>
+
+              <div className="min-w-0">
+
+                <p className="text-[11px] text-slate-400">
+                  Location
+                </p>
+
+                <p className="truncate text-xs font-bold text-[#172B4D]">
+                  Lahore, Pakistan
+                </p>
+
+              </div>
+
+            </div>
+
+            {/* HOURS */}
+
+            <div
+              className="
+                flex
+                items-center
+                gap-3
+
+                rounded-2xl
+
+                border
+                border-white
+
+                bg-slate-50/90
+
+                p-3
+
+                shadow-sm
+              "
+            >
+
+              <div
+                className="
+                  flex
+                  h-9
+                  w-9
+                  shrink-0
+                  items-center
+                  justify-center
+
+                  rounded-full
+
+                  bg-white
+
+                  text-[#0879D1]
+
+                  shadow-sm
+                "
+              >
+                <Clock3 size={17} />
+              </div>
+
+              <div>
+
+                <p className="text-[11px] text-slate-400">
+                  Opening Hours
+                </p>
+
+                <p className="text-xs font-bold text-[#172B4D]">
+                  8am - 10pm
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* =================================================
+              PHONE
+          ================================================= */}
+
+          <a
+            href="tel:+923005554647"
+            className="
+              mt-3
+
+              flex
+              items-center
+              justify-center
+              gap-2
+
+              rounded-2xl
+
+              border
+              border-blue-100
+
+              bg-white
+
+              py-3
+
+              text-xs
+              font-bold
+              text-[#172B4D]
+
+              shadow-sm
+
+              transition-all
+              duration-300
+
+              hover:border-blue-200
+              hover:bg-blue-50
+              hover:text-[#0879D1]
+            "
+          >
+            <Phone
+              size={16}
+              className="text-[#0879D1]"
+            />
+
+            +92 300 555-46-47
+          </a>
+
+          <div className="h-6" />
+
+        </div>
+
+      </aside>
     </>
   );
 };

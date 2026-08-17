@@ -11,7 +11,9 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-import BreakfastDonut from "../assets/Bg_remoe_plate.png";
+import BreakfastDonut from "../assets/Bg-remoe_plate.png";
+import Logo from "../assets/01_logo_bonbon.png"
+
 
 const MorningDelicious = () => {
   // Google Maps location
@@ -54,7 +56,7 @@ const MorningDelicious = () => {
             w-48
             rounded-full
             border-[28px]
-            border-[#087fd3]/10
+            border-[#087fd3]/20
           "
         />
 
@@ -68,7 +70,7 @@ const MorningDelicious = () => {
             w-40
             rounded-full
             border-[24px]
-            border-white/40
+            border-white/70
           "
         />
 
@@ -110,7 +112,7 @@ const MorningDelicious = () => {
             <div className="mb-4 flex items-center gap-3">
 
 
-              <span className="text-[12px] font-bold uppercase tracking-[3px] text-[#087fd3]">
+              <span className="text-[13px] font-[600] uppercase tracking-[2px] text-[#087fd3]">
                 Fresh every morning
               </span>
 
@@ -130,11 +132,10 @@ const MorningDelicious = () => {
                 lg:text-[56px]
               "
             >
-              MORNINGS SHOULD BE
-
-              <span className="mt-1 block font-serif font-normal italic text-[#087fd3]">
+              MORNINGS SHOULD BE <span className="mt-1  font-['Bebas_Neue'] text-[#087fd3]">
                 Delicious.
               </span>
+             
             </h1>
 
 
@@ -145,6 +146,7 @@ const MorningDelicious = () => {
                 mt-6
                 max-w-[430px]
                 text-[15px]
+                leading-[22px]
                 font-medium
                 leading-7
                 text-[#34445b]
@@ -164,7 +166,7 @@ const MorningDelicious = () => {
               to="/menu"
               className="
                 group
-                mt-7
+                mt-3
                 inline-flex
                 items-center
                 gap-3
@@ -271,7 +273,7 @@ const MorningDelicious = () => {
             w-56
             rounded-full
             border-[35px]
-            border-white/30
+            border-white/70
           "
         />
 
@@ -285,7 +287,7 @@ const MorningDelicious = () => {
             w-64
             rounded-full
             border-[45px]
-            border-white/20
+            border-white/60
           "
         />
 
@@ -321,67 +323,53 @@ const MorningDelicious = () => {
                 BRAND
             ================================================= */}
 
-            <div className="text-center lg:text-left">
+           {/* =================================================
+    BRAND
+================================================= */}
 
-              <Link
-                to="/"
-                className="inline-block"
-              >
-                <h2
-                  className="
-                    font-serif
-                    text-3xl
-                    font-bold
-                    tracking-tight
-                    text-[#17253d]
-                  "
-                >
-                  Donut
-                  <span className="text-[#087fd3]">
-                    .
-                  </span>
-                </h2>
-              </Link>
+<div className="text-center lg:text-left">
 
+  <Link
+    to="/"
+    className="inline-flex items-center justify-center lg:justify-start"
+  >
+    <img
+      src={Logo}
+      alt="Bon Bon Logo"
+      className="
+        h-auto
+        w-[140px]
+        object-contain
+        transition-transform
+        duration-300
+        hover:scale-105
 
-              <p
-                className="
-                  mx-auto
-                  mt-4
-                  max-w-[270px]
-                  text-sm
-                  leading-6
-                  text-[#34445b]
-                  lg:mx-0
-                "
-              >
-                Freshly made treats, warm mornings,
-                and little moments worth enjoying.
-              </p>
+        sm:w-[155px]
 
+        lg:w-[175px]
+      "
+    />
+  </Link>
 
-              {/* Brand detail */}
+  <p
+    className="
+      mx-auto
+      mt-5
+      max-w-[270px]
+      text-sm
+      leading-6
+      text-[#34445b]
+      lg:mx-0
+    "
+  >
+    Freshly made treats, warm mornings,
+    and little moments worth enjoying.
+  </p>
 
-              <div
-                className="
-                  mt-6
-                  flex
-                  items-center
-                  justify-center
-                  gap-3
-                  lg:justify-start
-                "
-              >
+  {/* Brand detail */}
+  
 
-                <span className="h-px w-8 bg-[#087fd3]" />
-
-                <span className="text-[10px] font-bold uppercase tracking-[2px] text-[#087fd3]">
-                  Made fresh daily
-                </span>
-
-              </div>
-
-            </div>
+</div>
 
 
             {/* =================================================
@@ -749,106 +737,253 @@ const MorningDelicious = () => {
                 NEWSLETTER
             ================================================= */}
 
-            <div>
+           <div className="relative">
 
-              <div
-                className="
-                  rounded-[26px]
-                  bg-white/70
-                  p-6
-                  shadow-[0_15px_40px_rgba(23,37,61,0.06)]
-                  backdrop-blur-sm
-                "
-              >
+  {/* Soft glow behind the card */}
+  <div
+    className="
+      pointer-events-none
+      absolute
+      -inset-3
+      rounded-[34px]
+      bg-[#087fd3]/10
+      blur-2xl
+    "
+  />
 
-                <span className="text-[10px] font-bold uppercase tracking-[2px] text-[#087fd3]">
-                  Stay in the loop
-                </span>
+  <div
+    className="
+      group
+      relative
+      overflow-hidden
+      rounded-[28px]
+
+      border
+      border-white/70
+
+      bg-white/45
+      p-6
+
+      shadow-[0_20px_60px_rgba(23,37,61,0.10)]
+
+      backdrop-blur-xl
+      backdrop-saturate-150
+
+      transition-all
+      duration-500
+
+      hover:-translate-y-1
+      hover:shadow-[0_25px_70px_rgba(23,37,61,0.14)]
+
+      sm:p-7
+    "
+  >
+
+    {/* Glass highlight */}
+    <div
+      className="
+        pointer-events-none
+        absolute
+        -right-16
+        -top-16
+        h-40
+        w-40
+        rounded-full
+        bg-white/60
+        blur-3xl
+      "
+    />
+
+    {/* Blue ambient glow */}
+    <div
+      className="
+        pointer-events-none
+        absolute
+        -bottom-20
+        -left-16
+        h-40
+        w-40
+        rounded-full
+        bg-[#087fd3]/10
+        blur-3xl
+      "
+    />
+
+    {/* Content */}
+    <div className="relative z-10">
+
+      {/* Small Label */}
+      <span
+        className="
+          inline-flex
+          items-center
+          rounded-full
+          border
+          border-[#087fd3]/15
+          bg-[#087fd3]/10
+          px-3
+          py-1
+          text-[10px]
+          font-bold
+          uppercase
+          tracking-[2px]
+          text-[#087fd3]
+        "
+      >
+        Stay in the loop
+      </span>
 
 
-                <h3
-                  className="
-                    mt-2
-                    font-serif
-                    text-2xl
-                    font-semibold
-                    leading-tight
-                    text-[#17253d]
-                  "
-                >
-                  Sweet news,
+      {/* Heading */}
+      <h3
+        className="
+          mt-4
+          font-serif
+          text-2xl
+          font-semibold
+          leading-[1.15]
+          tracking-tight
+          text-[#17253d]
 
-                  <span className="block italic font-normal">
-                    straight to you.
-                  </span>
-                </h3>
+          sm:text-[27px]
+        "
+      >
+        Sweet news,
 
-
-                <p className="mt-3 text-sm leading-6 text-[#667085]">
-                  Get new menu updates, special offers,
-                  and fresh donut news.
-                </p>
-
-
-                {/* Email Input */}
-
-                <div
-                  className="
-                    mt-5
-                    flex
-                    overflow-hidden
-                    rounded-full
-                    border
-                    border-[#dce5eb]
-                    bg-white
-                    p-1
-                  "
-                >
-
-                  <input
-                    type="email"
-                    placeholder="Your email"
-                    className="
-                      min-w-0
-                      flex-1
-                      bg-transparent
-                      px-4
-                      text-sm
-                      text-[#17253d]
-                      outline-none
-                      placeholder:text-[#98a2b3]
-                    "
-                  />
-
-                  <button
-                    type="button"
-                    className="
-                      shrink-0
-                      rounded-full
-                      bg-[#17253d]
-                      px-5
-                      py-2.5
-                      text-xs
-                      font-bold
-                      text-white
-                      transition-all
-                      duration-300
-                      hover:bg-[#087fd3]
-                    "
-                  >
-                    Join
-                  </button>
-
-                </div>
+        <span
+          className="
+            block
+            font-normal
+            text-[#087fd3]
+          "
+        >
+          straight to you.
+        </span>
+      </h3>
 
 
-                <p className="mt-3 text-[10px] leading-4 text-[#98a2b3]">
-                  No spam. Just good things.
-                </p>
+      {/* Description */}
+      <p
+        className="
+          mt-3
+          max-w-[320px]
+          text-sm
+          leading-6
+          text-[#667085]
+        "
+      >
+        Get new menu updates, special offers,
+        and fresh donut news.
+      </p>
 
-              </div>
 
-            </div>
+      {/* Email Input */}
+      <div
+        className="
+          mt-6
+          flex
+          overflow-hidden
+          rounded-full
+
+          border
+          border-white/80
+
+          bg-white/60
+
+          p-1
+
+          shadow-[inset_0_1px_8px_rgba(255,255,255,0.8)]
+
+          backdrop-blur-md
+
+          transition-all
+          duration-300
+
+          focus-within:border-[#087fd3]/30
+          focus-within:bg-white/75
+          focus-within:shadow-[0_8px_25px_rgba(8,127,211,0.10)]
+        "
+      >
+
+        <input
+          type="email"
+          placeholder="Your email"
+          className="
+            min-w-0
+            flex-1
+            bg-transparent
+            px-4
+            py-2.5
+            text-sm
+            text-[#17253d]
+            outline-none
+
+            placeholder:text-[#98a2b3]
+          "
+        />
+
+        <button
+          type="button"
+          className="
+            shrink-0
+            rounded-full
+
+            bg-[#17253d]
+
+            px-5
+            py-2.5
+
+            text-xs
+            font-bold
+            text-white
+
+            shadow-[0_6px_15px_rgba(23,37,61,0.18)]
+
+            transition-all
+            duration-300
+
+            hover:-translate-y-[1px]
+            hover:bg-[#087fd3]
+            hover:shadow-[0_8px_20px_rgba(8,127,211,0.25)]
+
+            active:scale-95
+          "
+        >
+          Join
+        </button>
+
+      </div>
+
+
+      {/* Privacy Text */}
+      <div className="mt-4 flex items-center gap-2">
+
+        <span
+          className="
+            h-1.5
+            w-1.5
+            rounded-full
+            bg-[#087fd3]
+          "
+        />
+
+        <p
+          className="
+            text-[10px]
+            leading-4
+            text-[#98a2b3]
+          "
+        >
+          No spam. Just good things.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
 
           </div>
 

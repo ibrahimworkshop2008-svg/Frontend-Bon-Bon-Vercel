@@ -91,7 +91,7 @@ const Menu = () => {
             SECTION HEADER
         ================================================= */}
 
-        <div className="mb-14 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div className="mb-13 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
 
           <div className="max-w-2xl">
 
@@ -102,7 +102,7 @@ const Menu = () => {
               </p>
             </div>
 
-            <h2 className="font-['Bebas_Neue'] text-4xl leading-[1.05] tracking-tight text-[#17253d] sm:text-5xl lg:text-6xl">
+            <h2 className="font-['Bebas_Neue'] text-4xl leading-[1.05]  font-[600] tracking-tight text-[#17253d] sm:text-5xl lg:text-6xl">
               Something sweet
               <span className="block font-normal text-[#087fd3]">
                 for every mood.

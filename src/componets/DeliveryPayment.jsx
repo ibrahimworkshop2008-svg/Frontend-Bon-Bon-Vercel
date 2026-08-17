@@ -20,7 +20,7 @@ const DeliveryPayment = () => {
             text-[#17253d]
           "
         >
-          DELIVERY & PAYMENT
+          DELIVERY <span className="text-[#087fd3]">&</span> PAYMENT
         </h2>
 
         {/* ================= CONTENT ================= */}

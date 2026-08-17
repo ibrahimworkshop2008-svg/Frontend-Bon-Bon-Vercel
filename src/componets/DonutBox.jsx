@@ -54,11 +54,12 @@ const DonutBox = () => {
 
             <button
               className="
-                mt-4
+                mt-5
                 text-[#34445b]
                 font-semibold
                 hover:text-[#087fd3]
                 transition-colors
+                ml-2
               "
             >
               Learn more
