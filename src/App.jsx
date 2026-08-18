@@ -28,6 +28,7 @@ import AdminDashboard from "./AdminDashboard/components/AdminDashboard";
 import AdminProducts from "./AdminDashboard/components/AdminProduct";
 import AdminOrders from "./AdminDashboard/components/AdminOrder";
 import OrderShow from "./AdminDashboard/components/OrderShows";
+import AdminProducts from "./AdminDashboard/components/AdminProductsShow";
 
 // ========================================
 // APP CONTENTs
@@ -153,6 +154,7 @@ const AppContent = () => {
           <Route index element={<AdminProducts />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="products" element={<OrderShow />} />
+          <Route path="productsShow" element={<AdminProducts />} />
         </Route>
 
         <Route path="/order-success" element={<OrderSuccess />} />

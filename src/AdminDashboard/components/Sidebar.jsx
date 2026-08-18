@@ -26,7 +26,7 @@ export default function Sidebar() {
     },
     {
       name: "Products",
-      path: "/admin/products",
+      path: "/admin/productsShow",
       icon: Package,
     },
     {
@@ -34,16 +34,14 @@ export default function Sidebar() {
       path: "/admin/orders",
       icon: ShoppingBag,
     },
-    {
-      name: "Customers",
-      path: "/admin/customers",
-      icon: Users,
+
+     {
+      name: "ProductsMan",
+      path: "/admin/products",
+      icon: ShoppingBag,
     },
-    {
-      name: "Settings",
-      path: "/admin/settings",
-      icon: Settings,
-    },
+
+
   ];
 
   // ================= NAVIGATION =================
