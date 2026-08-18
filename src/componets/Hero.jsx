@@ -16,61 +16,85 @@ const Hero = () => {
     <section
       className="
         relative
-        min-h-[720px]
         w-full
         overflow-hidden
         bg-white
-        bg-right
-        bg-fill
+        bg-cover
+        bg-center
         bg-no-repeat
 
-        sm:min-h-[700px]
-        sm:bg-[length:auto_100%]
-
+        min-h-[560px]
+        sm:min-h-[620px]
         md:min-h-[650px]
-        md:bg-right
-
-        lg:min-h-[650px]
-        lg:bg-cover
-        xl:min-h-[700px]
+        lg:min-h-[680px]
+        xl:min-h-[720px]
       "
       style={{
         backgroundImage: `url(${heroBg})`,
       }}
     >
+      {/*
+        Legibility overlay: the bg image is now always `bg-cover`, so on
+        narrow screens it can crop closer to the text. A soft left-to-right
+        fade keeps the heading readable at every width without hiding the
+        art on larger screens where there's room to breathe.
+      */}
+      <div
+        className="
+          pointer-events-none
+          absolute
+          inset-0
+          bg-gradient-to-r
+          from-white
+          via-white/70
+          to-transparent
+
+          sm:via-white/50
+
+          lg:from-white/90
+          lg:via-white/20
+        "
+        aria-hidden="true"
+      />
+
       {/* ================= CONTENT ================= */}
       <div
         className="
           relative
           z-10
           flex
-          min-h-[600px]
+          h-full
+          min-h-[560px]
           w-full
           items-center
 
           px-5
-          py-16
+          py-14
 
-          sm:min-h-[550px]
+          sm:min-h-[620px]
           sm:px-8
           sm:py-14
 
-          md:min-h-[590px]
+          md:min-h-[650px]
           md:px-10
 
-          lg:min-h-[650px]
+          lg:min-h-[680px]
           lg:px-14
 
+          xl:min-h-[720px]
           xl:px-20
         "
       >
-        <div className="w-full max-w-7xl mx-auto">
+        <div className="mx-auto w-full max-w-7xl">
           <div
             className="
               w-full
-              max-w-[600px]
+              max-w-[520px]
+
+              sm:max-w-[560px]
 
               lg:max-w-[620px]
+
               xl:max-w-[650px]
             "
           >
@@ -80,20 +104,13 @@ const Hero = () => {
                 head
                 font-['Bebas_Neue']
                 font-[500]
-                tracking-[1px]
                 leading-[0.85]
+                tracking-[1px]
                 text-[#10284B]
-
-                text-[64px]
-
-                sm:text-[76px]
-
-                md:text-[88px]
-
-                lg:text-[110px]
-
-                xl:text-[125px]
               "
+              style={{
+                fontSize: "clamp(2.75rem, 8vw + 1rem, 7.8125rem)",
+              }}
             >
               DONUTS
             </h1>
@@ -105,20 +122,13 @@ const Hero = () => {
                 mt-1
                 font-['Bebas_Neue']
                 font-[500]
-                tracking-[1px]
                 leading-[0.85]
+                tracking-[1px]
                 text-[#0878D1]
-
-                text-[38px]
-
-                sm:text-[46px]
-
-                md:text-[56px]
-
-                lg:text-[68px]
-
-                xl:text-[76px]
               "
+              style={{
+                fontSize: "clamp(1.75rem, 4.2vw + 0.75rem, 4.75rem)",
+              }}
             >
               WITHOUT FREEZING
             </h2>
@@ -127,7 +137,7 @@ const Hero = () => {
             <p
               className="
                 head
-                mt-6
+                mt-5
                 max-w-[420px]
                 text-sm
                 font-medium
@@ -135,12 +145,13 @@ const Hero = () => {
                 tracking-wide
                 text-[#10284B]
 
-                sm:text-base
+                sm:mt-6
                 sm:max-w-[480px]
+                sm:text-base
 
                 lg:mt-7
-                lg:text-lg
                 lg:max-w-[520px]
+                lg:text-lg
               "
             >
               Fresh, delicious, made for you!
@@ -162,6 +173,7 @@ const Hero = () => {
               <button
                 type="button"
                 className="
+                  shrink-0
                   rounded-full
                   bg-[#0878D1]
                   px-6
@@ -190,6 +202,7 @@ const Hero = () => {
                 className="
                   group
                   flex
+                  min-w-0
                   items-center
                   gap-3
                 "
@@ -225,6 +238,7 @@ const Hero = () => {
 
                 <span
                   className="
+                    truncate
                     text-left
                     font-['Bebas_Neue']
                     text-[13px]
@@ -249,12 +263,13 @@ const Hero = () => {
                 flex
                 w-full
                 flex-col
-                gap-6
+                gap-5
+
+                xs:flex-row
+                xs:items-center
+                xs:justify-between
 
                 sm:mt-9
-                sm:flex-row
-                sm:items-center
-                sm:justify-between
                 sm:gap-4
 
                 lg:mt-10
@@ -274,10 +289,13 @@ const Hero = () => {
                 <span
                   className="
                     mr-1
+                    hidden
                     whitespace-nowrap
                     text-[12px]
                     font-medium
                     text-[#10284B]
+
+                    min-[400px]:inline
 
                     sm:text-[13px]
 
@@ -367,8 +385,6 @@ const Hero = () => {
                   shrink-0
                   items-center
                   gap-3
-
-                  sm:ml-auto
                 "
               >
                 {/* Price Text */}
@@ -385,7 +401,6 @@ const Hero = () => {
                   <p>Starting from</p>
 
                   <p
-                  
                     className="
                       mt-1
                       text-sm
@@ -400,9 +415,9 @@ const Hero = () => {
 
                 {/* Arrow Button */}
                 <button
-                onClick={() => {
-                  navigate("/menu")
-                }}
+                  onClick={() => {
+                    navigate("/menu");
+                  }}
                   type="button"
                   aria-label="View product"
                   className="
@@ -425,7 +440,6 @@ const Hero = () => {
                     sm:w-10
                   "
                 >
-
                   <ArrowRight size={20} />
                 </button>
               </div>
