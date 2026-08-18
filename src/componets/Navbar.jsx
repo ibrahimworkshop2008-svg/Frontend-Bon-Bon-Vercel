@@ -605,6 +605,31 @@ const Navbar = () => {
                           My Profile
                         </Link>
 
+                        
+                        <Link
+                          to="/MyOrders"
+                          onClick={() =>
+                            setProfileOpen(false)
+                          }
+                          className="
+                            flex
+                            items-center
+                            gap-3
+                            rounded-xl
+                            px-3
+                            py-3
+                            text-sm
+                            font-medium
+                            text-[#172B4D]
+                            transition-all
+                            duration-200
+                            hover:bg-blue-50
+                            hover:text-[#0879D1]
+                          "
+                        >
+                         My Orders
+                        </Link>
+
                         <button
                           type="button"
                           onClick={handleLogout}
@@ -1260,6 +1285,29 @@ const Navbar = () => {
                 <User size={17} />
                 My Profile
               </Link>
+
+              
+                        <Link
+                          to="/MyOrders"
+                         onClick={closeMenu}
+                          className="
+                            flex
+                            items-center
+                            gap-3
+                            rounded-xl
+                            px-3
+                            py-3
+                            text-sm
+                            font-medium
+                            text-[#172B4D]
+                            transition-all
+                            duration-200
+                            hover:bg-blue-50
+                            hover:text-[#0879D1]
+                          "
+                        >
+                         My Orders
+                        </Link>
 
               <button
                 type="button"

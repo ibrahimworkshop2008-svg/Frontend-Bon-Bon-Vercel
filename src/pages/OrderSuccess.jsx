@@ -365,7 +365,7 @@ export default function OrderSuccess() {
                   </span>
 
                   <span className="font-semibold text-[#172B4D]">
-                    {formatPKR(order.subtotal)}
+                    {formatPKR(order.totalAmount)}
                   </span>
                 </div>
 

@@ -28,6 +28,7 @@ import AdminDashboard from "./AdminDashboard/AdminDashboard";
 import AuthProvider from "./ContextAuth/AuthProvider";
 import ProductProvider from "./ContextAuth/ProductProvider";
 import OrderSuccess from "./pages/OrderSuccess";
+import MyOrders from "./pages/MyOrders";
 
 // ========================================
 // APP CONTENT
@@ -205,6 +206,9 @@ const AppContent = () => {
 
         <Route path="/order-success"
           element={<OrderSuccess />}/>
+
+           <Route path="/MyOrders"
+          element={<MyOrders />}/>
 
       </Routes>
 
