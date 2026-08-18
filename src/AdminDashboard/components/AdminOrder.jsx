@@ -26,7 +26,7 @@ const AdminOrders = ({ onViewOrder }) => {
       setError("");
 
       const response = await api.get("/order/getOrdersAdmin");
-
+      
       if (response.data.success) {
         setOrders(response.data.orders || []);
       } else {

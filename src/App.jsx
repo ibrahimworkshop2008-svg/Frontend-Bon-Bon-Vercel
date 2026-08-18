@@ -151,7 +151,7 @@ const AppContent = () => {
 
         <Route path="/admin" element={<AdminDashboard />}>
           <Route index element={<AdminProducts />} />
-          <Route path="orders" element={<AdminOrder />} />
+          <Route path="orders" element={<AdminOrders />} />
           <Route path="products" element={<OrderShow />} />
         </Route>
 

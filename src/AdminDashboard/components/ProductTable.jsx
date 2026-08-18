@@ -20,7 +20,7 @@ export default function ProductTable({ filteredProducts, onEdit, onDelete }) {
           <tbody>
             {filteredProducts.map((p) => {
               const status = stockStatus(p.stock);
-              const s = STATUS_STYLES[status];
+               const s = STATUS_STYLES[status];
               const thumb = p.images?.[0]?.url || p.images?.[0]?.imageUrl || null;
               return (
                 <tr key={p._id} className="border-b border-[#F3EEE2] last:border-0">
