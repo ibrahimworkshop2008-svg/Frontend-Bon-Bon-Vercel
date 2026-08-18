@@ -375,9 +375,9 @@ export default function OrderSuccess() {
                   </span>
 
                   <span className="font-bold text-green-600">
-                    {order.shipping === 0
+                    {order.deliveryFee === 0
                       ? "FREE"
-                      : formatPKR(order.shipping)}
+                      : formatPKR(order.deliveryFee)}
                   </span>
                 </div>
 
@@ -396,7 +396,7 @@ export default function OrderSuccess() {
                     </p>
 
                     <p className="text-2xl font-extrabold text-[#0879D1]">
-                      {formatPKR(order.total)}
+                      {formatPKR(order.totalAmount)}
                     </p>
 
                   </div>
