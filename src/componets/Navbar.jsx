@@ -1288,26 +1288,37 @@ const Navbar = () => {
 
               
                         <Link
-                          to="/MyOrders"
-                         onClick={closeMenu}
-                          className="
-                            flex
-                            items-center
-                            gap-3
-                            rounded-xl
-                            px-3
-                            py-3
-                            text-sm
-                            font-medium
-                            text-[#172B4D]
-                            transition-all
-                            duration-200
-                            hover:bg-blue-50
-                            hover:text-[#0879D1]
-                          "
-                        >
-                         My Orders
-                        </Link>
+                to="/MyOrders"
+                onClick={closeMenu}
+                className="
+                  mt-3
+
+                  flex
+                  w-full
+                  items-center
+                  justify-center
+                  gap-2
+
+                  rounded-xl
+
+                  bg-blue-50
+
+                  py-3
+
+                  text-sm
+                  font-semibold
+                  text-[#0879D1]
+
+                  transition-all
+                  duration-300
+
+                  hover:bg-blue-100
+
+                  active:scale-[0.98]
+                "
+              >
+                My Orders
+              </Link>
 
               <button
                 type="button"

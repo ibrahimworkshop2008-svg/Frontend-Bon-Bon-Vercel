@@ -1,11 +1,6 @@
 import React from "react";
-import {
-  Routes,
-  Route,
-  useLocation,
-} from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-
 
 import Navbar from "./componets/Navbar";
 import SideProductShow from "./componets/SideProductShow";
@@ -23,15 +18,19 @@ import PaymentPage from "./pages/PaymentPage";
 import ProductDetails from "./pages/ProductDetails";
 import Menu from "./pages/Menu";
 import DeliveryPay from "./pages/DeliveryPay";
-import AdminDashboard from "./AdminDashboard/AdminDashboard";
 
 import AuthProvider from "./ContextAuth/AuthProvider";
 import ProductProvider from "./ContextAuth/ProductProvider";
 import OrderSuccess from "./pages/OrderSuccess";
 import MyOrders from "./pages/MyOrders";
 
+import AdminDashboard from "./AdminDashboard/components/AdminDashboard";
+import AdminProducts from "./AdminDashboard/components/AdminProduct";
+import AdminOrders from "./AdminDashboard/components/AdminOrder";
+import OrderShow from "./AdminDashboard/components/OrderShows";
+
 // ========================================
-// APP CONTENT
+// APP CONTENTs
 // ========================================
 
 const AppContent = () => {
@@ -49,14 +48,11 @@ const AppContent = () => {
     "/admin",
   ];
 
-  const hideLayout = hideLayoutPages.includes(
-    location.pathname
-  );
+  const hideLayout = hideLayoutPages.includes(location.pathname);
 
   return (
     <>
-
-    <Toaster
+      <Toaster
         position="top-right"
         reverseOrder={false}
         toastOptions={{
@@ -90,7 +86,6 @@ const AppContent = () => {
 
       <ScrollToTop />
 
-
       {/* ====================================
           NAVBAR
 
@@ -103,115 +98,67 @@ const AppContent = () => {
 
       {!hideLayout && <Navbar />}
 
-
       {/* ====================================
           ROUTES
       ==================================== */}
 
       <Routes>
-
         {/* ================= HOME ================= */}
 
-        <Route
-          path="/"
-          element={<Home />}
-        />
-
+        <Route path="/" element={<Home />} />
 
         {/* ================= ABOUT ================= */}
 
-        <Route
-          path="/about"
-          element={<About />}
-        />
-
+        <Route path="/about" element={<About />} />
 
         {/* ================= CONTACT ================= */}
 
-        <Route
-          path="/contact"
-          element={<Contact />}
-        />
-
+        <Route path="/contact" element={<Contact />} />
 
         {/* ================= SIGN UP ================= */}
 
-        <Route
-          path="/signup"
-          element={<SignUp />}
-        />
-
+        <Route path="/signup" element={<SignUp />} />
 
         {/* ================= LOGIN ================= */}
 
-        <Route
-          path="/login"
-          element={<Login />}
-        />
-
+        <Route path="/login" element={<Login />} />
 
         {/* ================= VERIFY EMAIL ================= */}
 
-        <Route
-          path="/verifyEmail"
-          element={<OTPsend />}
-        />
-
+        <Route path="/verifyEmail" element={<OTPsend />} />
 
         {/* ================= PROFILE ================= */}
 
-        <Route
-          path="/profile"
-          element={<Profile />}
-        />
-
+        <Route path="/profile" element={<Profile />} />
 
         {/* ================= CHECKOUT ================= */}
 
-        <Route
-          path="/checkout"
-          element={<PaymentPage />}
-        />
-
+        <Route path="/checkout" element={<PaymentPage />} />
 
         {/* ================= MENU ================= */}
 
-        <Route
-          path="/menu"
-          element={<Menu />}
-        />
-
+        <Route path="/menu" element={<Menu />} />
 
         {/* ================= DELIVERY & PAYMENT ================= */}
 
-        <Route
-          path="/payment"
-          element={<DeliveryPay />}
-        />
-
+        <Route path="/payment" element={<DeliveryPay />} />
 
         {/* ================= PRODUCT DETAILS ================= */}
 
-        <Route
-          path="/product/:id"
-          element={<ProductDetails />}
-        />
+        <Route path="/product/:id" element={<ProductDetails />} />
 
         {/* ================= ADMIN DASHBOARD ================= */}
 
-        <Route
-          path="/admin"
-          element={<AdminDashboard />}
-        />
+        <Route path="/admin" element={<AdminDashboard />}>
+          <Route index element={<AdminProducts />} />
+          <Route path="orders" element={<AdminOrder />} />
+          <Route path="products" element={<OrderShow />} />
+        </Route>
 
-        <Route path="/order-success"
-          element={<OrderSuccess />}/>
+        <Route path="/order-success" element={<OrderSuccess />} />
 
-           <Route path="/MyOrders"
-          element={<MyOrders />}/>
-
+        <Route path="/MyOrders" element={<MyOrders />} />
       </Routes>
-
 
       {/* ====================================
           FOOTER + CART
@@ -230,11 +177,9 @@ const AppContent = () => {
           <MorningDelicious />
         </>
       )}
-
     </>
   );
 };
-
 
 // ========================================
 // MAIN APP

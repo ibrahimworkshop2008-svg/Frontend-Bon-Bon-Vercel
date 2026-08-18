@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { getAllProducts, deleteProduct } from "../api/productApi";
-import Sidebar from "./components/Sidebar";
-import StatRing from "./components/StatRing";
-import Toast from "./components/Toast";
-import ProductFormModal from "./components/ProductFormModal";
-import ConfirmDeleteModal from "./components/ConfirmDeleteModal";
-import ProductTable from "./components/ProductTable";
-import ProductToolbar from "./components/ProductToolbar";
-import { STATUS, stockStatus } from "./components/adminDashboardUtils";
+import { getAllProducts, deleteProduct } from "../../api/productApi";
+import Sidebar from "./Sidebar";
+import StatRing from "./StatRing";
+import Toast from "./Toast";
+import ProductFormModal from "./ProductFormModal";
+import ConfirmDeleteModal from "./ConfirmDeleteModal";
+import ProductTable from "./ProductTable";
+import ProductToolbar from "./ProductToolbar";
+import { STATUS, stockStatus } from "./adminDashboardUtils";
 
 export default function AdminDashboard() {
   const [products, setProducts] = useState([]);
@@ -75,7 +75,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-[#FFFBF5] overflow-x-hidden" style={{ fontFamily: "'Inter', sans-serif" }}>
-      <Sidebar />
 
       <main className="flex-1 w-full px-4 py-4 sm:px-6 md:px-10 md:py-8 max-w-6xl mx-auto">
         <ProductToolbar
@@ -140,6 +139,8 @@ export default function AdminDashboard() {
         </div>
       </main>
 
+
+
       {formTarget !== null && (
         <ProductFormModal
           initial={formTarget._id ? formTarget : null}
@@ -160,6 +161,9 @@ export default function AdminDashboard() {
           onConfirm={handleDelete}
         />
       )}
+
+      
+
 
       <Toast toast={toast} />
     </div>
