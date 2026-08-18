@@ -79,7 +79,7 @@ export default function CheckoutPage() {
 
   const [cityError, setCityError] = useState("");
 
-  const [submitting, setSubmitting] = useState(false);=
+  const [submitting, setSubmitting] = useState(false)
 
   // ========================================
   // SAFE CART
