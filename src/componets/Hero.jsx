@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Play, ArrowRight } from "lucide-react";
 import {
   FaInstagram,
@@ -6,14 +6,216 @@ import {
   FaFacebookF,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import gsap from "gsap";
 
 import heroBg from "../assets/bg_image.png";
 
 const Hero = () => {
   const navigate = useNavigate();
 
+  // =========================================================
+  // GSAP REFS
+  // =========================================================
+
+  const heroRef = useRef(null);
+  const bgRef = useRef(null);
+  const headingRef = useRef(null);
+  const subHeadingRef = useRef(null);
+  const descriptionRef = useRef(null);
+  const buttonsRef = useRef(null);
+  const socialRef = useRef(null);
+  const priceRef = useRef(null);
+  const overlayRef = useRef(null);
+
+  // =========================================================
+  // GSAP ANIMATION
+  // =========================================================
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Initial states
+      gsap.set(bgRef.current, {
+        scale: 1.08,
+      });
+
+      gsap.set(overlayRef.current, {
+        opacity: 0,
+      });
+
+      gsap.set(
+        [
+          headingRef.current,
+          subHeadingRef.current,
+          descriptionRef.current,
+          buttonsRef.current,
+          socialRef.current,
+          priceRef.current,
+        ],
+        {
+          opacity: 0,
+          y: 40,
+        }
+      );
+
+      // =====================================================
+      // MAIN TIMELINE
+      // =====================================================
+
+      const tl = gsap.timeline({
+        defaults: {
+          ease: "power3.out",
+        },
+      });
+
+      // Background reveal
+      tl.to(
+        overlayRef.current,
+        {
+          opacity: 1,
+          duration: 0.8,
+        },
+        0
+      );
+
+      // Background zoom out
+      tl.to(
+        bgRef.current,
+        {
+          scale: 1,
+          duration: 1.8,
+          ease: "power2.out",
+        },
+        0
+      );
+
+      // Main heading
+      tl.to(
+        headingRef.current,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: "power4.out",
+        },
+        0.25
+      );
+
+      // Second heading
+      tl.to(
+        subHeadingRef.current,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power4.out",
+        },
+        "-=0.55"
+      );
+
+      // Description
+      tl.to(
+        descriptionRef.current,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+        },
+        "-=0.45"
+      );
+
+      // Buttons
+      tl.to(
+        buttonsRef.current,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+        },
+        "-=0.4"
+      );
+
+      // Social
+      tl.to(
+        socialRef.current,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+        },
+        "-=0.35"
+      );
+
+      // Price
+      tl.to(
+        priceRef.current,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+        },
+        "-=0.5"
+      );
+    }, heroRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  // =========================================================
+  // MOUSE PARALLAX
+  // =========================================================
+
+  useEffect(() => {
+    const hero = heroRef.current;
+    const background = bgRef.current;
+
+    if (!hero || !background) return;
+
+    const handleMouseMove = (e) => {
+      const rect = hero.getBoundingClientRect();
+
+      const x =
+        (e.clientX - rect.left) / rect.width - 0.5;
+
+      const y =
+        (e.clientY - rect.top) / rect.height - 0.5;
+
+      gsap.to(background, {
+        x: x * 18,
+        y: y * 12,
+        duration: 1.2,
+        ease: "power3.out",
+        overwrite: "auto",
+      });
+    };
+
+    const handleMouseLeave = () => {
+      gsap.to(background, {
+        x: 0,
+        y: 0,
+        duration: 1.2,
+        ease: "power3.out",
+      });
+    };
+
+    hero.addEventListener("mousemove", handleMouseMove);
+    hero.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      hero.removeEventListener(
+        "mousemove",
+        handleMouseMove
+      );
+
+      hero.removeEventListener(
+        "mouseleave",
+        handleMouseLeave
+      );
+    };
+  }, []);
+
   return (
     <section
+      ref={heroRef}
       className="
         relative
         w-full
@@ -33,17 +235,38 @@ const Hero = () => {
         backgroundImage: `url(${heroBg})`,
       }}
     >
-      {/*
-        Legibility overlay: the bg image is now always `bg-cover`, so on
-        narrow screens it can crop closer to the text. A soft left-to-right
-        fade keeps the heading readable at every width without hiding the
-        art on larger screens where there's room to breathe.
-      */}
+      {/* =====================================================
+          ANIMATED BACKGROUND LAYER
+      ====================================================== */}
+
       <div
+        ref={bgRef}
+        className="
+          pointer-events-none
+          absolute
+          -inset-8
+          bg-inherit
+          bg-cover
+          bg-center
+          bg-no-repeat
+          will-change-transform
+        "
+        style={{
+          backgroundImage: `url(${heroBg})`,
+        }}
+      />
+
+      {/* =====================================================
+          OVERLAY
+      ====================================================== */}
+
+      <div
+        ref={overlayRef}
         className="
           pointer-events-none
           absolute
           inset-0
+
           bg-gradient-to-r
           from-white
           via-white/70
@@ -57,7 +280,10 @@ const Hero = () => {
         aria-hidden="true"
       />
 
-      {/* ================= CONTENT ================= */}
+      {/* =====================================================
+          CONTENT
+      ====================================================== */}
+
       <div
         className="
           relative
@@ -98,47 +324,63 @@ const Hero = () => {
               xl:max-w-[650px]
             "
           >
-            {/* ================= MAIN HEADING ================= */}
+            {/* =================================================
+                MAIN HEADING
+            ================================================== */}
+
             <h1
+              ref={headingRef}
               className="
-                head
                 font-['Bebas_Neue']
                 font-[500]
                 leading-[0.85]
                 tracking-[1px]
                 text-[#10284B]
+
+                will-change-transform
               "
               style={{
-                fontSize: "clamp(2.75rem, 8vw + 1rem, 7.8125rem)",
+                fontSize:
+                  "clamp(2.75rem, 8vw + 1rem, 7.8125rem)",
               }}
             >
               DONUTS
             </h1>
 
-            {/* ================= SECOND HEADING ================= */}
+            {/* =================================================
+                SECOND HEADING
+            ================================================== */}
+
             <h2
+              ref={subHeadingRef}
               className="
-                head
                 mt-1
                 font-['Bebas_Neue']
                 font-[500]
                 leading-[0.85]
                 tracking-[1px]
                 text-[#0878D1]
+
+                will-change-transform
               "
               style={{
-                fontSize: "clamp(1.75rem, 4.2vw + 0.75rem, 4.75rem)",
+                fontSize:
+                  "clamp(1.75rem, 4.2vw + 0.75rem, 4.75rem)",
               }}
             >
               WITHOUT FREEZING
             </h2>
 
-            {/* ================= DESCRIPTION ================= */}
+            {/* =================================================
+                DESCRIPTION
+            ================================================== */}
+
             <p
+              ref={descriptionRef}
               className="
-                head
                 mt-5
                 max-w-[420px]
+
                 text-sm
                 font-medium
                 leading-relaxed
@@ -152,13 +394,19 @@ const Hero = () => {
                 lg:mt-7
                 lg:max-w-[520px]
                 lg:text-lg
+
+                will-change-transform
               "
             >
               Fresh, delicious, made for you!
             </p>
 
-            {/* ================= BUTTONS ================= */}
+            {/* =================================================
+                BUTTONS
+            ================================================== */}
+
             <div
+              ref={buttonsRef}
               className="
                 mt-5
                 flex
@@ -167,25 +415,38 @@ const Hero = () => {
                 gap-4
 
                 sm:mt-6
+
+                will-change-transform
               "
             >
               {/* ORDER NOW */}
+
               <button
                 type="button"
                 className="
+                  group
+                  relative
                   shrink-0
+                  overflow-hidden
                   rounded-full
                   bg-[#0878D1]
+
                   px-6
                   py-3
+
                   text-sm
                   font-bold
                   text-white
+
                   shadow-lg
+
                   transition-all
                   duration-300
+
                   hover:-translate-y-1
                   hover:bg-[#006FBD]
+                  hover:shadow-xl
+
                   active:scale-95
 
                   sm:px-8
@@ -193,10 +454,31 @@ const Hero = () => {
                 "
                 onClick={() => navigate("/menu")}
               >
-                Order Now
+                <span className="relative z-10">
+                  Order Now
+                </span>
+
+                {/* Shine */}
+                <span
+                  className="
+                    absolute
+                    inset-y-0
+                    -left-10
+                    w-8
+                    rotate-12
+                    bg-white/30
+                    blur-sm
+
+                    transition-all
+                    duration-700
+
+                    group-hover:left-[120%]
+                  "
+                />
               </button>
 
               {/* WATCH VIDEO */}
+
               <button
                 type="button"
                 className="
@@ -209,6 +491,7 @@ const Hero = () => {
               >
                 <span
                   className="
+                    relative
                     flex
                     h-10
                     w-10
@@ -218,18 +501,42 @@ const Hero = () => {
                     rounded-full
                     bg-white
                     shadow-md
+
                     transition-all
                     duration-300
+
                     group-hover:scale-110
 
                     sm:h-11
                     sm:w-11
                   "
                 >
+                  {/* Pulse ring */}
+
+                  <span
+                    className="
+                      absolute
+                      inset-0
+                      rounded-full
+                      border
+                      border-[#0878D1]/30
+
+                      opacity-0
+
+                      transition-all
+                      duration-300
+
+                      group-hover:scale-125
+                      group-hover:opacity-100
+                    "
+                  />
+
                   <Play
                     size={16}
                     fill="currentColor"
                     className="
+                      relative
+                      z-10
                       ml-0.5
                       text-[#0878D1]
                     "
@@ -256,7 +563,10 @@ const Hero = () => {
               </button>
             </div>
 
-            {/* ================= SOCIAL + PRICE ================= */}
+            {/* =================================================
+                SOCIAL + PRICE
+            ================================================== */}
+
             <div
               className="
                 mt-8
@@ -273,10 +583,16 @@ const Hero = () => {
                 sm:gap-4
 
                 lg:mt-10
+
+                will-change-transform
               "
             >
-              {/* ================= SOCIAL ================= */}
+              {/* =================================================
+                  SOCIAL
+              ================================================== */}
+
               <div
+                ref={socialRef}
                 className="
                   flex
                   flex-wrap
@@ -306,6 +622,7 @@ const Hero = () => {
                 </span>
 
                 {/* Instagram */}
+
                 <a
                   href="#"
                   aria-label="Instagram"
@@ -320,9 +637,12 @@ const Hero = () => {
                     bg-white
                     text-[#10284B]
                     shadow-sm
+
                     transition-all
                     duration-200
+
                     hover:-translate-y-1
+                    hover:scale-110
                     hover:text-[#0878D1]
                   "
                 >
@@ -330,6 +650,7 @@ const Hero = () => {
                 </a>
 
                 {/* Twitter */}
+
                 <a
                   href="#"
                   aria-label="Twitter"
@@ -344,9 +665,12 @@ const Hero = () => {
                     bg-white
                     text-[#10284B]
                     shadow-sm
+
                     transition-all
                     duration-200
+
                     hover:-translate-y-1
+                    hover:scale-110
                     hover:text-[#0878D1]
                   "
                 >
@@ -354,6 +678,7 @@ const Hero = () => {
                 </a>
 
                 {/* Facebook */}
+
                 <a
                   href="#"
                   aria-label="Facebook"
@@ -368,9 +693,12 @@ const Hero = () => {
                     bg-white
                     text-[#10284B]
                     shadow-sm
+
                     transition-all
                     duration-200
+
                     hover:-translate-y-1
+                    hover:scale-110
                     hover:text-[#0878D1]
                   "
                 >
@@ -378,8 +706,12 @@ const Hero = () => {
                 </a>
               </div>
 
-              {/* ================= PRICE ================= */}
+              {/* =================================================
+                  PRICE
+              ================================================== */}
+
               <div
+                ref={priceRef}
                 className="
                   flex
                   shrink-0
@@ -387,7 +719,8 @@ const Hero = () => {
                   gap-3
                 "
               >
-                {/* Price Text */}
+                {/* Price */}
+
                 <div
                   className="
                     whitespace-nowrap
@@ -413,7 +746,8 @@ const Hero = () => {
                   </p>
                 </div>
 
-                {/* Arrow Button */}
+                {/* Arrow */}
+
                 <button
                   onClick={() => {
                     navigate("/menu");
@@ -421,6 +755,7 @@ const Hero = () => {
                   type="button"
                   aria-label="View product"
                   className="
+                    group
                     flex
                     h-9
                     w-9
@@ -431,16 +766,27 @@ const Hero = () => {
                     bg-[#0878D1]
                     text-white
                     shadow-lg
+
                     transition-all
-                    duration-200
+                    duration-300
+
                     hover:scale-110
+                    hover:shadow-xl
+
                     active:scale-95
 
                     sm:h-10
                     sm:w-10
                   "
                 >
-                  <ArrowRight size={20} />
+                  <ArrowRight
+                    size={20}
+                    className="
+                      transition-transform
+                      duration-300
+                      group-hover:translate-x-1
+                    "
+                  />
                 </button>
               </div>
             </div>

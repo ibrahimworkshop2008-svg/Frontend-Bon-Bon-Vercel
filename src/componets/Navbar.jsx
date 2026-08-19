@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import gsap from "gsap";
 
 import {
   ShoppingCart,
@@ -26,7 +28,25 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const { user, logout } = useAuth();
-  const { cartItems,  setCartItems,  setIsCartOpen } = useCart();
+  const { cartItems, setCartItems, setIsCartOpen } = useCart();
+
+  // =========================================================
+  // GSAP REFS
+  // =========================================================
+
+  const navbarRef = useRef(null);
+  const navbarAppear = useRef(null)
+  const logoRef = useRef(null);
+  const navLinksRef = useRef([]);
+  const desktopActionsRef = useRef(null);
+
+  const mobileDrawerRef = useRef(null);
+  const mobileOverlayRef = useRef(null);
+  const mobileItemsRef = useRef([]);
+  const mobileExtraItemsRef = useRef([]);
+
+  const profileDropdownRef = useRef(null);
+  const cartBadgesRef = useRef([]);
 
   // =========================================================
   // NAVIGATION LINKS
@@ -82,19 +102,290 @@ const Navbar = () => {
       setProfileOpen(false);
       setIsMenuOpen(false);
 
-      
+      localStorage.clear();
 
-    localStorage.clear()
-    
-        setCartItems([])
-
-
+      setCartItems([]);
 
       navigate("/");
     } catch (error) {
       console.error("Logout failed:", error);
     }
   };
+
+  // =========================================================
+  // NAVBAR ENTRANCE ANIMATION
+  // =========================================================
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        defaults: {
+          ease: "power3.out",
+        },
+      });
+
+      tl.fromTo(
+        navbarRef.current,
+        {
+          y: -35,
+          opacity: 0,
+        },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.7,
+        }
+      )
+        .fromTo(
+          logoRef.current,
+          {
+            x: -35,
+            opacity: 0,
+            scale: 0.9,
+          },
+          {
+            x: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.6,
+          },
+          "-=0.35"
+        )
+        .fromTo(
+          navLinksRef.current,
+          {
+            y: -15,
+            opacity: 0,
+          },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.45,
+            stagger: 0.08,
+          },
+          "-=0.35"
+        )
+        .fromTo(
+          desktopActionsRef.current,
+          {
+            x: 30,
+            opacity: 0,
+          },
+          {
+            x: 0,
+            opacity: 1,
+            duration: 0.5,
+          },
+          "-=0.35"
+        );
+    }, navbarRef);
+
+    return () => ctx.revert();
+  }, []);
+
+
+  // =========================================================
+// HIDE / SHOW NAVBAR BASED ON MOUSE DIRECTION
+// =========================================================
+
+useEffect(() => {
+  let lastMouseY = window.innerHeight / 2;
+  let isNavbarHidden = false;
+
+  const handleMouseMove = (event) => {
+    const currentMouseY = event.clientY;
+
+    // Mouse moved DOWN
+    if (currentMouseY > lastMouseY + 5) {
+      if (!isNavbarHidden) {
+        isNavbarHidden = true;
+
+        gsap.to(navbarRef.current, {
+          yPercent: -100,
+          duration: 0.45,
+          ease: "power3.out",
+          overwrite: true,
+        });
+      }
+    }
+
+    // Mouse moved UP
+    else if (currentMouseY < lastMouseY - 5) {
+      if (isNavbarHidden) {
+        isNavbarHidden = false;
+
+        gsap.to(navbarRef.current, {
+          yPercent: 0,
+          duration: 0.45,
+          ease: "power3.out",
+          overwrite: true,
+        });
+      }
+    }
+
+    lastMouseY = currentMouseY;
+  };
+
+  window.addEventListener("mousemove", handleMouseMove);
+
+  return () => {
+    window.removeEventListener("mousemove", handleMouseMove);
+    gsap.killTweensOf(navbarRef.current);
+  };
+}, []);
+
+  // =========================================================
+  // LOGO HOVER
+  // =========================================================
+
+  const handleLogoEnter = () => {
+    gsap.to(logoRef.current, {
+      scale: 1.06,
+      rotate: -2,
+      duration: 0.35,
+      ease: "power2.out",
+    });
+  };
+
+  const handleLogoLeave = () => {
+    gsap.to(logoRef.current, {
+      scale: 1,
+      rotate: 0,
+      duration: 0.35,
+      ease: "power2.out",
+    });
+  };
+
+  // =========================================================
+  // MOBILE MENU ANIMATION
+  // =========================================================
+
+  useEffect(() => {
+    if (!mobileDrawerRef.current) return;
+
+    if (isMenuOpen) {
+      gsap.killTweensOf([
+        mobileDrawerRef.current,
+        mobileOverlayRef.current,
+      ]);
+
+      gsap.set(mobileDrawerRef.current, {
+        xPercent: -100,
+      });
+
+      gsap.set(mobileOverlayRef.current, {
+        opacity: 0,
+      });
+
+      gsap.to(mobileDrawerRef.current, {
+        xPercent: 0,
+        duration: 0.65,
+        ease: "power4.out",
+      });
+
+      gsap.to(mobileOverlayRef.current, {
+        opacity: 1,
+        duration: 0.4,
+        ease: "power2.out",
+      });
+
+      gsap.fromTo(
+        mobileItemsRef.current.filter(Boolean),
+        {
+          x: -30,
+          opacity: 0,
+        },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.45,
+          stagger: 0.07,
+          delay: 0.25,
+          ease: "power3.out",
+        }
+      );
+
+      gsap.fromTo(
+        mobileExtraItemsRef.current.filter(Boolean),
+        {
+          y: 25,
+          opacity: 0,
+        },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.08,
+          delay: 0.45,
+          ease: "power3.out",
+        }
+      );
+    } else {
+      gsap.killTweensOf([
+        mobileDrawerRef.current,
+        mobileOverlayRef.current,
+      ]);
+
+      gsap.to(mobileDrawerRef.current, {
+        xPercent: -100,
+        duration: 0.5,
+        ease: "power3.inOut",
+      });
+
+      gsap.to(mobileOverlayRef.current, {
+        opacity: 0,
+        duration: 0.3,
+        ease: "power2.out",
+      });
+    }
+  }, [isMenuOpen]);
+
+  // =========================================================
+  // PROFILE DROPDOWN ANIMATION
+  // =========================================================
+
+  useEffect(() => {
+    if (!profileDropdownRef.current || !profileOpen) return;
+
+    gsap.fromTo(
+      profileDropdownRef.current,
+      {
+        y: -12,
+        opacity: 0,
+        scale: 0.94,
+        transformOrigin: "top right",
+      },
+      {
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        duration: 0.35,
+        ease: "back.out(1.5)",
+      }
+    );
+  }, [profileOpen]);
+
+  // =========================================================
+  // CART BADGE ANIMATION
+  // =========================================================
+
+  useEffect(() => {
+    cartBadgesRef.current.forEach((badge) => {
+      if (!badge) return;
+
+      gsap.fromTo(
+        badge,
+        {
+          scale: 0.5,
+        },
+        {
+          scale: 1,
+          duration: 0.4,
+          ease: "back.out(2)",
+        }
+      );
+    });
+  }, [cartItems?.length]);
 
   // =========================================================
   // CLOSE MENU ON SCROLL
@@ -120,20 +411,75 @@ const Navbar = () => {
   // ESCAPE KEY
   // =========================================================
 
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.key === "Escape") {
-        setIsMenuOpen(false);
-        setProfileOpen(false);
+ // =========================================================
+// HIDE / SHOW NAVBAR ON SCROLL DIRECTION
+// =========================================================
+
+useEffect(() => {
+  let lastScrollY = window.scrollY;
+  let navbarHidden = false;
+
+  const handleScroll = () => {
+    const currentScrollY = window.scrollY;
+    if (isMenuOpen) return;
+
+    // Always show navbar at the very top
+    if (currentScrollY <= 10) {
+      if (navbarHidden) {
+        navbarHidden = false;
+
+        gsap.to(navbarAppear.current, {
+          yPercent: 0,
+          duration: 0.5,
+          ease: "power3.out",
+          overwrite: true,
+        });
       }
-    };
 
-    window.addEventListener("keydown", handleKeyDown);
+      lastScrollY = currentScrollY;
+      return;
+    }
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
+    // Scroll DOWN
+    if (currentScrollY > lastScrollY) {
+      if (!navbarHidden) {
+        navbarHidden = true;
+
+        gsap.to(navbarAppear.current, {
+          yPercent: -100,
+          duration: 0.5,
+          ease: "power3.out",
+          overwrite: true,
+        });
+      }
+    }
+
+    // Scroll UP
+    else if (currentScrollY < lastScrollY) {
+      if (navbarHidden) {
+        navbarHidden = false;
+
+        gsap.to(navbarAppear.current, {
+          yPercent: 0,
+          duration: 0.5,
+          ease: "power3.out",
+          overwrite: true,
+        });
+      }
+    }
+
+    lastScrollY = currentScrollY;
+  };
+
+  window.addEventListener("scroll", handleScroll, {
+    passive: true,
+  });
+
+  return () => {
+    window.removeEventListener("scroll", handleScroll);
+    gsap.killTweensOf(navbarRef.current);
+  };
+}, []);
 
   // =========================================================
   // BODY SCROLL LOCK
@@ -151,6 +497,10 @@ const Navbar = () => {
     };
   }, [isMenuOpen]);
 
+  // =========================================================
+  // JSX
+  // =========================================================
+
   return (
     <>
       {/* =====================================================
@@ -158,6 +508,8 @@ const Navbar = () => {
       ====================================================== */}
 
       <header
+        ref={navbarRef}
+        ref={navbarAppear}
         className="
           sticky
           top-0
@@ -171,7 +523,6 @@ const Navbar = () => {
         "
       >
         <nav className="relative w-full">
-
           {/* =================================================
               MAIN NAVBAR
           ================================================= */}
@@ -187,24 +538,25 @@ const Navbar = () => {
               gap-3
               px-4
               py-2.5
-
               sm:min-h-[78px]
               sm:px-6
               lg:px-8
               xl:px-10
             "
           >
-
             {/* =================================================
                 LOGO
             ================================================= */}
 
             <Link
+              ref={logoRef}
               to="/"
               onClick={() => {
                 closeMenu();
                 setProfileOpen(false);
               }}
+              onMouseEnter={handleLogoEnter}
+              onMouseLeave={handleLogoLeave}
               className="
                 group
                 flex
@@ -219,10 +571,6 @@ const Navbar = () => {
                   h-11
                   w-auto
                   object-contain
-                  transition-transform
-                  duration-300
-                  group-hover:scale-105
-
                   sm:h-13
                   lg:h-14
                 "
@@ -243,23 +591,25 @@ const Navbar = () => {
                 2xl:gap-8
               "
             >
-              {navLinks.map((link) => (
-                <li key={link.path}>
+              {navLinks.map((link, index) => (
+                <li
+                  key={link.path}
+                  ref={(el) => {
+                    navLinksRef.current[index] = el;
+                  }}
+                >
                   <NavLink
                     to={link.path}
                     className={({ isActive }) => `
                       group
                       relative
                       whitespace-nowrap
-
                       font-['Bebas_Neue']
                       text-[13px]
                       font-medium
                       tracking-wide
-
                       transition-colors
                       duration-300
-
                       xl:text-sm
 
                       ${
@@ -275,7 +625,6 @@ const Navbar = () => {
                       after:-translate-x-1/2
                       after:rounded-full
                       after:bg-[#0879D1]
-
                       after:transition-all
                       after:duration-300
 
@@ -297,6 +646,7 @@ const Navbar = () => {
             ================================================= */}
 
             <div
+              ref={desktopActionsRef}
               className="
                 hidden
                 shrink-0
@@ -307,11 +657,9 @@ const Navbar = () => {
                 2xl:gap-4
               "
             >
-
               {/* LOCATION */}
 
               <div className="hidden items-center gap-2 xl:flex">
-
                 <div
                   className="
                     flex
@@ -347,7 +695,6 @@ const Navbar = () => {
                     Main Boulevard
                   </p>
                 </div>
-
               </div>
 
               {/* PHONE */}
@@ -392,16 +739,13 @@ const Navbar = () => {
                   border
                   border-blue-200
                   bg-white
-
                   transition-all
                   duration-300
-
                   hover:-translate-y-0.5
                   hover:border-[#0879D1]
                   hover:bg-[#0879D1]
                   hover:shadow-lg
                   hover:shadow-blue-100
-
                   active:scale-95
                 "
               >
@@ -416,6 +760,9 @@ const Navbar = () => {
                 />
 
                 <span
+                  ref={(el) => {
+                    cartBadgesRef.current[0] = el;
+                  }}
                   className="
                     absolute
                     -right-1
@@ -443,7 +790,6 @@ const Navbar = () => {
 
               {user ? (
                 <div className="relative">
-
                   <button
                     type="button"
                     onClick={() =>
@@ -461,17 +807,13 @@ const Navbar = () => {
                       py-1
                       pl-1
                       pr-2
-
                       transition-all
                       duration-300
-
                       hover:border-blue-300
                       hover:bg-blue-50
-
                       xl:pr-3
                     "
                   >
-
                     <div
                       className="
                         flex
@@ -492,7 +834,6 @@ const Navbar = () => {
                     </div>
 
                     <div className="hidden text-left 2xl:block">
-
                       <p className="max-w-[100px] truncate text-xs font-bold text-[#172B4D]">
                         {user.name || "User"}
                       </p>
@@ -500,7 +841,6 @@ const Navbar = () => {
                       <p className="max-w-[120px] truncate text-[10px] text-slate-500">
                         {user.email}
                       </p>
-
                     </div>
 
                     <ChevronDown
@@ -511,7 +851,6 @@ const Navbar = () => {
                         transition-transform
                         duration-300
                         xl:block
-
                         ${
                           profileOpen
                             ? "rotate-180"
@@ -519,13 +858,13 @@ const Navbar = () => {
                         }
                       `}
                     />
-
                   </button>
 
                   {/* PROFILE DROPDOWN */}
 
                   {profileOpen && (
                     <div
+                      ref={profileDropdownRef}
                       className="
                         absolute
                         right-0
@@ -541,11 +880,8 @@ const Navbar = () => {
                         backdrop-blur-xl
                       "
                     >
-
                       <div className="border-b border-gray-100 px-4 py-4">
-
                         <div className="flex items-center gap-3">
-
                           <div
                             className="
                               flex
@@ -563,7 +899,6 @@ const Navbar = () => {
                           </div>
 
                           <div className="min-w-0">
-
                             <p className="truncate text-sm font-bold text-[#172B4D]">
                               {user.name || "User"}
                             </p>
@@ -571,15 +906,11 @@ const Navbar = () => {
                             <p className="truncate text-xs text-gray-500">
                               {user.email}
                             </p>
-
                           </div>
-
                         </div>
-
                       </div>
 
                       <div className="p-2">
-
                         <Link
                           to="/profile"
                           onClick={() =>
@@ -605,7 +936,6 @@ const Navbar = () => {
                           My Profile
                         </Link>
 
-                        
                         <Link
                           to="/MyOrders"
                           onClick={() =>
@@ -627,7 +957,7 @@ const Navbar = () => {
                             hover:text-[#0879D1]
                           "
                         >
-                         My Orders
+                          My Orders
                         </Link>
 
                         <button
@@ -653,15 +983,11 @@ const Navbar = () => {
                           <LogOut size={18} />
                           Logout
                         </button>
-
                       </div>
-
                     </div>
                   )}
-
                 </div>
               ) : (
-
                 <Link
                   to="/login"
                   className="
@@ -675,14 +1001,11 @@ const Navbar = () => {
                     text-white
                     shadow-md
                     shadow-blue-100
-
                     transition-all
                     duration-300
-
                     hover:-translate-y-0.5
                     hover:bg-[#066DB8]
                     hover:shadow-lg
-
                     xl:px-5
                     xl:py-2.5
                     xl:text-sm
@@ -690,9 +1013,7 @@ const Navbar = () => {
                 >
                   Login
                 </Link>
-
               )}
-
             </div>
 
             {/* =================================================
@@ -708,7 +1029,6 @@ const Navbar = () => {
                 lg:hidden
               "
             >
-
               {/* MOBILE CART */}
 
               <button
@@ -727,10 +1047,8 @@ const Navbar = () => {
                   border
                   border-blue-100
                   bg-blue-50
-
                   transition-all
                   duration-300
-
                   hover:bg-blue-100
                   active:scale-95
                 "
@@ -746,6 +1064,9 @@ const Navbar = () => {
                 />
 
                 <span
+                  ref={(el) => {
+                    cartBadgesRef.current[1] = el;
+                  }}
                   className="
                     absolute
                     -right-1
@@ -810,35 +1131,29 @@ const Navbar = () => {
                   <Menu size={22} />
                 )}
               </button>
-
             </div>
-
           </div>
         </nav>
       </header>
 
       {/* =====================================================
           MOBILE OVERLAY
-          IMPORTANT: OUTSIDE HEADER
       ====================================================== */}
 
       <div
+        ref={mobileOverlayRef}
         className={`
           fixed
           inset-0
           z-[150]
           lg:hidden
-
           bg-[#10284B]/35
           backdrop-blur-[5px]
-
-          transition-all
-          duration-500
-
+          opacity-0
           ${
             isMenuOpen
-              ? "visible opacity-100"
-              : "pointer-events-none invisible opacity-0"
+              ? "pointer-events-auto"
+              : "pointer-events-none"
           }
         `}
         onClick={closeMenu}
@@ -847,51 +1162,32 @@ const Navbar = () => {
 
       {/* =====================================================
           MOBILE SIDE DRAWER
-          IMPORTANT: OUTSIDE HEADER
       ====================================================== */}
 
       <aside
-        className={`
+        ref={mobileDrawerRef}
+        className="
           fixed
           left-0
           top-0
           z-[200]
-
           flex
           h-[100dvh]
           w-[88%]
           max-w-[390px]
           flex-col
-
           overflow-hidden
-
           rounded-r-[34px]
-
           border-r
           border-white/80
-
           bg-white/95
-
           shadow-[20px_0_70px_rgba(16,40,75,0.25)]
-
           backdrop-blur-2xl
           backdrop-saturate-150
-
           lg:hidden
-
-          transition-transform
-          duration-500
-          ease-[cubic-bezier(0.22,1,0.36,1)]
-
-          ${
-            isMenuOpen
-              ? "translate-x-0"
-              : "-translate-x-full"
-          }
-        `}
+        "
         aria-hidden={!isMenuOpen}
       >
-
         {/* =================================================
             DRAWER HEADER
         ================================================= */}
@@ -902,23 +1198,16 @@ const Navbar = () => {
             shrink-0
             items-center
             justify-between
-
             border-b
             border-blue-50
-
             bg-[#EFF8FF]/95
-
             px-4
             py-4
-
             shadow-sm
-
             backdrop-blur-xl
           "
         >
-
           <div className="flex min-w-0 items-center gap-3">
-
             <div
               className="
                 flex
@@ -927,14 +1216,10 @@ const Navbar = () => {
                 shrink-0
                 items-center
                 justify-center
-
                 rounded-full
-
                 border
                 border-white
-
                 bg-white
-
                 shadow-[0_5px_15px_rgba(16,40,75,0.08)]
               "
             >
@@ -946,7 +1231,6 @@ const Navbar = () => {
             </div>
 
             <div className="min-w-0">
-
               <p className="truncate text-sm font-extrabold text-[#172B4D]">
                 Bon Bon Donuts
               </p>
@@ -954,9 +1238,7 @@ const Navbar = () => {
               <p className="truncate text-[11px] text-slate-500">
                 Fresh & delicious every day
               </p>
-
             </div>
-
           </div>
 
           <button
@@ -970,31 +1252,22 @@ const Navbar = () => {
               shrink-0
               items-center
               justify-center
-
               rounded-full
-
               border
               border-blue-100
-
               bg-white
-
               text-slate-500
-
               shadow-sm
-
               transition-all
               duration-300
-
               hover:rotate-90
               hover:bg-blue-50
               hover:text-[#0879D1]
-
               active:scale-90
             "
           >
             <X size={18} />
           </button>
-
         </div>
 
         {/* =================================================
@@ -1006,31 +1279,23 @@ const Navbar = () => {
             flex-1
             overflow-y-auto
             overscroll-contain
-
             px-3
             py-4
-
             sm:px-4
           "
         >
-
-          {/* =================================================
-              NAVIGATION
-          ================================================= */}
+          {/* NAVIGATION */}
 
           <nav>
-
             <p
               className="
                 mb-2
                 px-2
-
                 font-['Bebas_Neue']
                 text-[11px]
                 font-bold
                 uppercase
                 tracking-[2px]
-
                 text-[#0879D1]
               "
             >
@@ -1038,41 +1303,36 @@ const Navbar = () => {
             </p>
 
             <ul className="space-y-1.5">
-
-              {navLinks.map((link) => (
-
-                <li key={link.path}>
-
+              {navLinks.map((link, index) => (
+                <li
+                  key={link.path}
+                  ref={(el) => {
+                    mobileItemsRef.current[index] = el;
+                  }}
+                >
                   <NavLink
                     to={link.path}
                     onClick={closeMenu}
                     className={({ isActive }) => `
                       group
                       relative
-
                       flex
                       items-center
                       justify-between
-
                       overflow-hidden
-
                       rounded-2xl
-
                       px-4
                       py-3.5
-
                       font-['Bebas_Neue']
                       text-base
                       font-bold
                       tracking-wide
-
                       transition-all
                       duration-300
 
                       ${
                         isActive
                           ? `
-                            translate-x-0
                             bg-[#0879D1]
                             text-white
                             shadow-[0_8px_25px_rgba(8,121,209,0.22)]
@@ -1086,38 +1346,28 @@ const Navbar = () => {
                       }
                     `}
                   >
-
-                    <span>
-                      {link.name}
-                    </span>
+                    <span>{link.name}</span>
 
                     <ArrowRight
                       size={17}
                       className="
                         transition-all
                         duration-300
-
                         group-hover:translate-x-1
-
-                        group-hover:text-[#0879D1]
                       "
                     />
-
                   </NavLink>
-
                 </li>
-
               ))}
-
             </ul>
-
           </nav>
 
-          {/* =================================================
-              CART
-          ================================================= */}
+          {/* CART */}
 
           <button
+            ref={(el) => {
+              mobileExtraItemsRef.current[0] = el;
+            }}
             type="button"
             onClick={openCart}
             className="
@@ -1126,32 +1376,22 @@ const Navbar = () => {
               w-full
               items-center
               justify-between
-
               rounded-2xl
-
               bg-gradient-to-r
               from-[#0879D1]
               to-[#066DB8]
-
               px-4
               py-3.5
-
               text-white
-
               shadow-[0_10px_30px_rgba(8,121,209,0.25)]
-
               transition-all
               duration-300
-
               hover:-translate-y-0.5
               hover:shadow-[0_15px_35px_rgba(8,121,209,0.30)]
-
               active:scale-[0.98]
             "
           >
-
             <span className="flex items-center gap-3">
-
               <span
                 className="
                   flex
@@ -1167,7 +1407,6 @@ const Navbar = () => {
               </span>
 
               <span className="text-left">
-
                 <span className="block text-sm font-bold">
                   Your Cart
                 </span>
@@ -1176,45 +1415,32 @@ const Navbar = () => {
                   {cartItems?.length || 0} item
                   {cartItems?.length === 1 ? "" : "s"} added
                 </span>
-
               </span>
-
             </span>
 
             <ArrowRight size={18} />
-
           </button>
 
-          {/* =================================================
-              USER
-          ================================================= */}
+          {/* USER */}
 
           {user ? (
-
             <div
-
-            onClick={(e) => e.stopPropagation()}
-
+              ref={(el) => {
+                mobileExtraItemsRef.current[1] = el;
+              }}
+              onClick={(e) => e.stopPropagation()}
               className="
                 mt-4
-
                 rounded-2xl
-
                 border
                 border-blue-100
-
                 bg-white/80
-
                 p-3
-
                 shadow-sm
-
                 backdrop-blur-md
               "
             >
-
               <div className="flex items-center gap-3">
-
                 <div
                   className="
                     flex
@@ -1223,15 +1449,11 @@ const Navbar = () => {
                     shrink-0
                     items-center
                     justify-center
-
                     rounded-full
-
                     bg-[#0879D1]
-
                     text-sm
                     font-bold
                     text-white
-
                     shadow-md
                   "
                 >
@@ -1239,7 +1461,6 @@ const Navbar = () => {
                 </div>
 
                 <div className="min-w-0 flex-1">
-
                   <p className="truncate text-sm font-bold text-[#172B4D]">
                     {user.name || "User"}
                   </p>
@@ -1247,9 +1468,7 @@ const Navbar = () => {
                   <p className="truncate text-xs text-slate-500">
                     {user.email}
                   </p>
-
                 </div>
-
               </div>
 
               <Link
@@ -1257,28 +1476,20 @@ const Navbar = () => {
                 onClick={closeMenu}
                 className="
                   mt-3
-
                   flex
                   w-full
                   items-center
                   justify-center
                   gap-2
-
                   rounded-xl
-
                   bg-blue-50
-
                   py-3
-
                   text-sm
                   font-semibold
                   text-[#0879D1]
-
                   transition-all
                   duration-300
-
                   hover:bg-blue-100
-
                   active:scale-[0.98]
                 "
               >
@@ -1286,34 +1497,25 @@ const Navbar = () => {
                 My Profile
               </Link>
 
-              
-                        <Link
+              <Link
                 to="/MyOrders"
                 onClick={closeMenu}
                 className="
                   mt-3
-
                   flex
                   w-full
                   items-center
                   justify-center
                   gap-2
-
                   rounded-xl
-
                   bg-blue-50
-
                   py-3
-
                   text-sm
                   font-semibold
                   text-[#0879D1]
-
                   transition-all
                   duration-300
-
                   hover:bg-blue-100
-
                   active:scale-[0.98]
                 "
               >
@@ -1325,82 +1527,65 @@ const Navbar = () => {
                 onClick={handleLogout}
                 className="
                   mt-2
-
                   flex
                   w-full
                   items-center
                   justify-center
                   gap-2
-
                   rounded-xl
-
                   bg-red-50
-
                   py-3
-
                   text-sm
                   font-semibold
                   text-red-500
-
                   transition-all
                   duration-300
-
                   hover:bg-red-100
-
                   active:scale-[0.98]
                 "
               >
                 <LogOut size={17} />
                 Logout
               </button>
-
             </div>
-
           ) : (
-
             <Link
+              ref={(el) => {
+                mobileExtraItemsRef.current[1] = el;
+              }}
               to="/login"
               onClick={closeMenu}
               className="
                 mt-4
-
                 flex
                 w-full
                 items-center
                 justify-center
                 gap-2
-
                 rounded-2xl
-
                 bg-[#172B4D]
-
                 py-3.5
-
                 text-sm
                 font-bold
                 text-white
-
                 shadow-md
-
                 transition-all
                 duration-300
-
                 hover:bg-[#0879D1]
-
                 active:scale-[0.98]
               "
             >
               <User size={18} />
               Login / Create Account
             </Link>
-
           )}
 
-          {/* =================================================
-              LOCATION + HOURS
-          ================================================= */}
+          {/* LOCATION + HOURS */}
 
           <div
+            ref={(el) => {
+              mobileExtraItemsRef.current[2] = el;
+            }}
             className="
               mt-4
               grid
@@ -1409,7 +1594,6 @@ const Navbar = () => {
               sm:grid-cols-2
             "
           >
-
             {/* LOCATION */}
 
             <div
@@ -1417,20 +1601,14 @@ const Navbar = () => {
                 flex
                 items-center
                 gap-3
-
                 rounded-2xl
-
                 border
                 border-white
-
                 bg-slate-50/90
-
                 p-3
-
                 shadow-sm
               "
             >
-
               <div
                 className="
                   flex
@@ -1439,13 +1617,9 @@ const Navbar = () => {
                   shrink-0
                   items-center
                   justify-center
-
                   rounded-full
-
                   bg-white
-
                   text-[#0879D1]
-
                   shadow-sm
                 "
               >
@@ -1453,7 +1627,6 @@ const Navbar = () => {
               </div>
 
               <div className="min-w-0">
-
                 <p className="text-[11px] text-slate-400">
                   Location
                 </p>
@@ -1461,9 +1634,7 @@ const Navbar = () => {
                 <p className="truncate text-xs font-bold text-[#172B4D]">
                   Lahore, Pakistan
                 </p>
-
               </div>
-
             </div>
 
             {/* HOURS */}
@@ -1473,20 +1644,14 @@ const Navbar = () => {
                 flex
                 items-center
                 gap-3
-
                 rounded-2xl
-
                 border
                 border-white
-
                 bg-slate-50/90
-
                 p-3
-
                 shadow-sm
               "
             >
-
               <div
                 className="
                   flex
@@ -1495,13 +1660,9 @@ const Navbar = () => {
                   shrink-0
                   items-center
                   justify-center
-
                   rounded-full
-
                   bg-white
-
                   text-[#0879D1]
-
                   shadow-sm
                 "
               >
@@ -1509,7 +1670,6 @@ const Navbar = () => {
               </div>
 
               <div>
-
                 <p className="text-[11px] text-slate-400">
                   Opening Hours
                 </p>
@@ -1517,45 +1677,34 @@ const Navbar = () => {
                 <p className="text-xs font-bold text-[#172B4D]">
                   8am - 10pm
                 </p>
-
               </div>
-
             </div>
-
           </div>
 
-          {/* =================================================
-              PHONE
-          ================================================= */}
+          {/* PHONE */}
 
           <a
+            ref={(el) => {
+              mobileExtraItemsRef.current[3] = el;
+            }}
             href="tel:+923005554647"
             className="
               mt-3
-
               flex
               items-center
               justify-center
               gap-2
-
               rounded-2xl
-
               border
               border-blue-100
-
               bg-white
-
               py-3
-
               text-xs
               font-bold
               text-[#172B4D]
-
               shadow-sm
-
               transition-all
               duration-300
-
               hover:border-blue-200
               hover:bg-blue-50
               hover:text-[#0879D1]
@@ -1570,12 +1719,11 @@ const Navbar = () => {
           </a>
 
           <div className="h-6" />
-
         </div>
-
       </aside>
     </>
   );
 };
 
 export default Navbar;
+

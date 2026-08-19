@@ -13,9 +13,15 @@ import {
   ChevronRight,
 } from "lucide-react";
 
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
 import { useCart } from "../ContextAuth/ProductProvider";
 
 import api from "../api/axiosInstance";
+
+// Register ScrollTrigger
+gsap.registerPlugin(ScrollTrigger);
 
 const FlavorSection = () => {
   // ========================================
@@ -36,9 +42,13 @@ const FlavorSection = () => {
   const [error, setError] = useState("");
 
   // ========================================
-  // SCROLL REF
+  // REFS
   // ========================================
 
+  const sectionRef = useRef(null);
+  const headingRef = useRef(null);
+  const descriptionRef = useRef(null);
+  const productsRef = useRef(null);
   const scrollRef = useRef(null);
 
   // ========================================
@@ -51,7 +61,6 @@ const FlavorSection = () => {
         setLoading(true);
         setError("");
 
-        // Axios instance use karo
         const res = await api.get("/product/all");
 
         console.log(
@@ -86,6 +95,250 @@ const FlavorSection = () => {
 
     fetchProducts();
   }, []);
+
+  // ========================================
+  // GSAP SCROLL ANIMATION
+  // ========================================
+
+  useEffect(() => {
+    // Products load hone ke baad hi animation chale
+    if (
+      loading ||
+      error ||
+      !products.length ||
+      !sectionRef.current
+    ) {
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      // ====================================
+      // INITIAL STATES
+      // ====================================
+
+      gsap.set(headingRef.current, {
+        opacity: 0,
+        y: 70,
+      });
+
+      gsap.set(descriptionRef.current, {
+        opacity: 0,
+        y: 35,
+      });
+
+      const cards =
+        productsRef.current?.querySelectorAll(
+          ".flavor-card"
+        );
+
+      const images =
+        productsRef.current?.querySelectorAll(
+          ".flavor-image"
+        );
+
+      const names =
+        productsRef.current?.querySelectorAll(
+          ".flavor-name"
+        );
+
+      const prices =
+        productsRef.current?.querySelectorAll(
+          ".flavor-price"
+        );
+
+      const cartButtons =
+        productsRef.current?.querySelectorAll(
+          ".flavor-cart"
+        );
+
+      const detailLinks =
+        productsRef.current?.querySelectorAll(
+          ".flavor-details"
+        );
+
+      // ====================================
+      // CARD INITIAL STATE
+      // ====================================
+
+      gsap.set(cards, {
+        opacity: 0,
+        y: 80,
+        scale: 0.92,
+      });
+
+      gsap.set(images, {
+        opacity: 0,
+        scale: 0.65,
+        rotate: -8,
+      });
+
+      gsap.set(names, {
+        opacity: 0,
+        y: 20,
+      });
+
+      gsap.set(prices, {
+        opacity: 0,
+        y: 15,
+      });
+
+      gsap.set(
+        [...cartButtons, ...detailLinks],
+        {
+          opacity: 0,
+          y: 15,
+        }
+      );
+
+      // ====================================
+      // MAIN TIMELINE
+      // ====================================
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+
+          start: "top 75%",
+
+          toggleActions:
+            "play none none reverse",
+
+          // markers: true,
+        },
+      });
+
+      // ====================================
+      // HEADING
+      // ====================================
+
+      tl.to(
+        headingRef.current,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: "power3.out",
+        }
+      );
+
+      // ====================================
+      // DESCRIPTION
+      // ====================================
+
+      tl.to(
+        descriptionRef.current,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          ease: "power3.out",
+        },
+        "-=0.5"
+      );
+
+      // ====================================
+      // PRODUCT CARDS
+      // ====================================
+
+      tl.to(
+        cards,
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.8,
+          stagger: 0.12,
+          ease: "back.out(1.4)",
+        },
+        "-=0.3"
+      );
+
+      // ====================================
+      // PRODUCT IMAGES
+      // ====================================
+
+      tl.to(
+        images,
+        {
+          opacity: 1,
+          scale: 1,
+          rotate: 0,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "back.out(1.7)",
+        },
+        "-=0.65"
+      );
+
+      // ====================================
+      // PRODUCT NAMES
+      // ====================================
+
+      tl.to(
+        names,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          stagger: 0.08,
+          ease: "power2.out",
+        },
+        "-=0.55"
+      );
+
+      // ====================================
+      // PRICES
+      // ====================================
+
+      tl.to(
+        prices,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.45,
+          stagger: 0.07,
+          ease: "power2.out",
+        },
+        "-=0.35"
+      );
+
+      // ====================================
+      // BUTTONS + DETAILS
+      // ====================================
+
+      tl.to(
+        [...cartButtons, ...detailLinks],
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          stagger: 0.06,
+          ease: "power2.out",
+        },
+        "-=0.3"
+      );
+
+      // ====================================
+      // IMAGE FLOATING EFFECT
+      // ====================================
+
+      images?.forEach((image, index) => {
+        gsap.to(image, {
+          y: -7,
+          duration: 2.2 + index * 0.1,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: index * 0.15,
+        });
+      });
+    }, sectionRef);
+
+    // Cleanup
+    return () => {
+      ctx.revert();
+    };
+  }, [loading, error, products]);
 
   // ========================================
   // SCROLL PRODUCTS
@@ -160,7 +413,7 @@ const FlavorSection = () => {
             text-red-500
           "
         >
-         hello {error}
+          {error}
         </p>
       </section>
     );
@@ -172,6 +425,7 @@ const FlavorSection = () => {
 
   return (
     <section
+      ref={sectionRef}
       className="
         relative
         w-full
@@ -202,6 +456,7 @@ const FlavorSection = () => {
         ====================================== */}
 
         <div
+          ref={headingRef}
           className="
             mb-8
             text-center
@@ -227,12 +482,21 @@ const FlavorSection = () => {
               YOUR FLAVOR
             </span>
           </h2>
+        </div>
 
+        {/* ======================================
+            DESCRIPTION
+        ====================================== */}
+
+        <div
+          ref={descriptionRef}
+          className="mb-8 sm:mb-10"
+        >
           <p
             className="
               mx-auto
-              mt-3
               max-w-md
+              text-center
               text-xs
               font-medium
               leading-relaxed
@@ -251,8 +515,10 @@ const FlavorSection = () => {
             PRODUCT CAROUSEL
         ====================================== */}
 
-        <div className="relative">
-
+        <div
+          ref={productsRef}
+          className="relative"
+        >
           {/* ====================================
               LEFT ARROW
           ==================================== */}
@@ -315,6 +581,7 @@ const FlavorSection = () => {
                   product.id
                 }
                 className="
+                  flavor-card
                   group
                   flex
                   min-w-full
@@ -353,11 +620,12 @@ const FlavorSection = () => {
                       "Donut"
                     }
                     className="
+                      flavor-image
                       h-36
                       w-36
                       object-contain
                       transition
-                      duration-300
+                      duration-500
                       group-hover:scale-110
                       sm:h-40
                       sm:w-40
@@ -373,6 +641,7 @@ const FlavorSection = () => {
 
                 <h3
                   className="
+                    flavor-name
                     mt-2
                     font-['Bebas_Neue']
                     text-lg
@@ -391,6 +660,7 @@ const FlavorSection = () => {
 
                 <p
                   className="
+                    flavor-price
                     mt-1
                     font-['Bebas_Neue']
                     text-lg
@@ -413,6 +683,7 @@ const FlavorSection = () => {
                     )
                   }
                   className="
+                    flavor-cart
                     mt-3
                     flex
                     items-center
@@ -448,6 +719,7 @@ const FlavorSection = () => {
                 <Link
                   to={`/product/${product._id}`}
                   className="
+                    flavor-details
                     mt-3
                     flex
                     items-center
@@ -503,7 +775,6 @@ const FlavorSection = () => {
           >
             <ChevronRight size={22} />
           </button>
-
         </div>
       </div>
     </section>

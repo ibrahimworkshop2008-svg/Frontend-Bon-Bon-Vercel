@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import api from "../api/axiosInstance";
 import toast from "react-hot-toast";
 
@@ -14,7 +14,24 @@ import {
 import { FaInstagram, FaFacebookF } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
+
 const Contact = () => {
+  // ==========================================
+  // REFS FOR GSAP
+  // ==========================================
+
+  const sectionRef = useRef(null);
+  const heroRef = useRef(null);
+  const contactContentRef = useRef(null);
+  const leftContentRef = useRef(null);
+  const formRef = useRef(null);
+  const quickContactRef = useRef(null);
+  const socialRef = useRef(null);
+
   // ==========================================
   // FORM STATE
   // ==========================================
@@ -26,11 +43,163 @@ const Contact = () => {
     message: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   // ==========================================
-  // LOADING STATE
+  // GSAP ANIMATIONS
   // ==========================================
 
-  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // ----------------------------------------
+      // HERO ANIMATION
+      // ----------------------------------------
+
+      const heroTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "top 80%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      heroTimeline
+        .from(".contact-label", {
+          y: 30,
+          opacity: 0,
+          duration: 0.7,
+          ease: "power3.out",
+        })
+        .from(
+          ".contact-title",
+          {
+            y: 50,
+            opacity: 0,
+            duration: 0.9,
+            ease: "power3.out",
+          },
+          "-=0.35"
+        )
+        .from(
+          ".contact-description",
+          {
+            y: 30,
+            opacity: 0,
+            duration: 0.7,
+            ease: "power2.out",
+          },
+          "-=0.45"
+        );
+
+      // ----------------------------------------
+      // HERO DECORATIVE CIRCLES
+      // ----------------------------------------
+
+      gsap.from(".hero-circle", {
+        scale: 0.5,
+        opacity: 0,
+        duration: 1.5,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "top 80%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      // ----------------------------------------
+      // LEFT CONTENT
+      // ----------------------------------------
+
+      gsap.from(".contact-left-item", {
+        x: -60,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: "power3.out",
+
+        scrollTrigger: {
+          trigger: leftContentRef.current,
+          start: "top 78%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      // ----------------------------------------
+      // RIGHT FORM
+      // ----------------------------------------
+
+      gsap.from(formRef.current, {
+        x: 70,
+        opacity: 0,
+        scale: 0.96,
+        duration: 1,
+        ease: "power3.out",
+
+        scrollTrigger: {
+          trigger: formRef.current,
+          start: "top 80%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      // ----------------------------------------
+      // FORM ELEMENTS
+      // ----------------------------------------
+
+      gsap.from(".form-field", {
+        y: 25,
+        opacity: 0,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: "power2.out",
+
+        scrollTrigger: {
+          trigger: formRef.current,
+          start: "top 70%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      // ----------------------------------------
+      // QUICK CONTACT
+      // ----------------------------------------
+
+      gsap.from(".quick-contact-content", {
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out",
+
+        scrollTrigger: {
+          trigger: quickContactRef.current,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      // ----------------------------------------
+      // SOCIAL ICONS
+      // ----------------------------------------
+
+      gsap.from(".social-icon", {
+        y: 25,
+        opacity: 0,
+        scale: 0.7,
+        duration: 0.6,
+        stagger: 0.12,
+        ease: "back.out(1.9)",
+
+        scrollTrigger: {
+          trigger: socialRef.current,
+          start: "top 90%",
+          toggleActions: "play none none none",
+        },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   // ==========================================
   // HANDLE INPUT CHANGE
@@ -46,13 +215,12 @@ const Contact = () => {
   };
 
   // ==========================================
-  // SUBMIT CONTACT FORM
+  // SUBMIT
   // ==========================================
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prevent multiple submissions
     if (loading) return;
 
     setLoading(true);
@@ -68,7 +236,6 @@ const Contact = () => {
       console.log("Message response:", response.data);
 
       if (response.data.success) {
-        // SUCCESS TOAST
         toast.success(
           response.data.message ||
             "Your message has been sent successfully!",
@@ -77,7 +244,6 @@ const Contact = () => {
           }
         );
 
-        // Clear form
         setFormData({
           name: "",
           email: "",
@@ -121,109 +287,134 @@ const Contact = () => {
   // ==========================================
 
   return (
-    <section className="w-full overflow-hidden bg-white">
-
+    <section
+      ref={sectionRef}
+      className="w-full overflow-hidden bg-white"
+    >
       {/* =========================================
           HERO
       ========================================== */}
 
-      <div className="relative overflow-hidden bg-[#f4fbff]">
+      <div
+  ref={heroRef}
+  className="relative overflow-hidden bg-[#f4fbff]"
+>
+  {/* ================= DECORATIVE CIRCLES ================= */}
 
-        {/* Decorative circles */}
+  <div
+    className="
+      hero-circle
+      absolute
+      -right-16
+      -top-16
+      h-48
+      w-48
+      rounded-full
+      bg-[#ccecff]
+      opacity-70
+      sm:h-56
+      sm:w-56
+      lg:h-64
+      lg:w-64
+    "
+  />
 
-        <div
-          className="
-            absolute
-            -right-24
-            -top-24
-            h-72
-            w-72
-            rounded-full
-            bg-[#ccecff]
-            opacity-70
-          "
-        />
+  <div
+    className="
+      hero-circle
+      absolute
+      -bottom-20
+      -left-14
+      h-48
+      w-48
+      rounded-full
+      bg-[#e4f7ff]
+      sm:h-56
+      sm:w-56
+      lg:h-64
+      lg:w-64
+    "
+  />
 
-        <div
-          className="
-            absolute
-            -bottom-32
-            -left-20
-            h-72
-            w-72
-            rounded-full
-            bg-[#e4f7ff]
-          "
-        />
+  {/* ================= HERO CONTENT ================= */}
 
-        <div
-          className="
-            relative
-            mx-auto
-            max-w-7xl
-            px-5
-            py-16
-            text-center
-            sm:px-6
-            lg:px-8
-            lg:py-20
-          "
-        >
+  <div
+    className="
+      relative
+      mx-auto
+      max-w-6xl
+      px-5
+      py-10
+      text-center
+      sm:px-6
+      sm:py-12
+      lg:px-8
+      lg:py-14
+    "
+  >
+    {/* Label */}
+    <p
+      className="
+        contact-label
+        text-[11px]
+        font-bold
+        uppercase
+        tracking-[3px]
+        text-[#087fd3]
+        sm:text-xs
+        sm:tracking-[4px]
+      "
+    >
+      Get In Touch
+    </p>
 
-          <p
-            className="
-              text-sm
-              font-bold
-              uppercase
-              tracking-[4px]
-              text-[#087fd3]
-            "
-          >
-            Get In Touch
-          </p>
+    {/* Heading */}
+    <h1
+      className="
+        contact-title
+        mt-2
+        text-3xl
+        font-extrabold
+        leading-tight
+        tracking-tight
+        text-[#17253d]
+        sm:text-4xl
+        lg:text-5xl
+      "
+    >
+      CONTACT{" "}
+      <span className="text-[#087fd3]">
+        US
+      </span>
+    </h1>
 
-          <h1
-            className="
-              mt-3
-              text-4xl
-              font-extrabold
-              leading-tight
-              tracking-tight
-              text-[#17253d]
-              sm:text-5xl
-              lg:text-6xl
-            "
-          >
-            CONTACT{" "}
-            <span className="text-[#087fd3]">
-              US
-            </span>
-          </h1>
-
-          <p
-            className="
-              mx-auto
-              mt-5
-              max-w-2xl
-              text-sm
-              leading-6
-              text-[#34445b]
-              sm:text-base
-            "
-          >
-            Have a question, want to place an order, or
-            just want to say hello? We'd love to hear from
-            you.
-          </p>
-
-        </div>
-      </div>
+    {/* Description */}
+    <p
+      className="
+        contact-description
+        mx-auto
+        mt-3
+        max-w-xl
+        text-xs
+        leading-5
+        text-[#34445b]
+        sm:text-sm
+        sm:leading-6
+      "
+    >
+      Have a question, want to place an order, or
+      just want to say hello? We'd love to hear from
+      you.
+    </p>
+  </div>
+</div>
 
       {/* =========================================
           CONTACT CONTENT
       ========================================== */}
 
       <div
+        ref={contactContentRef}
         className="
           mx-auto
           max-w-7xl
@@ -234,7 +425,6 @@ const Contact = () => {
           lg:py-20
         "
       >
-
         <div
           className="
             grid
@@ -244,15 +434,14 @@ const Contact = () => {
             lg:gap-16
           "
         >
-
           {/* =======================================
               LEFT SIDE
           ======================================== */}
 
-          <div>
-
+          <div ref={leftContentRef}>
             <p
               className="
+                contact-left-item
                 text-sm
                 font-bold
                 uppercase
@@ -265,6 +454,7 @@ const Contact = () => {
 
             <h2
               className="
+                contact-left-item
                 mt-2
                 text-3xl
                 font-extrabold
@@ -281,6 +471,7 @@ const Contact = () => {
 
             <p
               className="
+                contact-left-item
                 mt-5
                 max-w-lg
                 text-sm
@@ -295,6 +486,8 @@ const Contact = () => {
             </p>
 
             {/* PHONE */}
+           <div className="contact-left-item">
+
 
             <a
               href={`tel:${phoneNumber}`}
@@ -316,9 +509,9 @@ const Contact = () => {
                 hover:shadow-[0_12px_30px_rgba(23,37,61,0.10)]
               "
             >
-
               <div
                 className="
+                .contact-left-item
                   flex
                   h-12
                   w-12
@@ -337,7 +530,6 @@ const Contact = () => {
               </div>
 
               <div>
-
                 <p className="text-xs text-gray-400">
                   Call Us
                 </p>
@@ -352,13 +544,12 @@ const Contact = () => {
                 >
                   +92 323 3278821
                 </p>
-
               </div>
-
             </a>
+            </div>
 
             {/* WHATSAPP */}
-
+           <div className="contact-left-item">
             <a
               href={whatsappUrl}
               target="_blank"
@@ -381,9 +572,9 @@ const Contact = () => {
                 hover:shadow-[0_12px_30px_rgba(23,37,61,0.10)]
               "
             >
-
               <div
                 className="
+                .contact-left-item
                   flex
                   h-12
                   w-12
@@ -402,7 +593,6 @@ const Contact = () => {
               </div>
 
               <div>
-
                 <p className="text-xs text-gray-400">
                   WhatsApp
                 </p>
@@ -417,13 +607,13 @@ const Contact = () => {
                 >
                   Chat With Us
                 </p>
-
               </div>
-
             </a>
+            </div>
 
             {/* LOCATION */}
 
+          <div className="contact-left-item">
             <a
               href={mapUrl}
               target="_blank"
@@ -446,7 +636,6 @@ const Contact = () => {
                 hover:shadow-[0_12px_30px_rgba(23,37,61,0.10)]
               "
             >
-
               <div
                 className="
                   flex
@@ -467,7 +656,6 @@ const Contact = () => {
               </div>
 
               <div>
-
                 <p className="text-xs text-gray-400">
                   Visit Us
                 </p>
@@ -482,15 +670,15 @@ const Contact = () => {
                 >
                   Lahore, Pakistan
                 </p>
-
               </div>
-
             </a>
+            </div>
 
             {/* OPENING HOURS */}
 
             <div
               className="
+                contact-left-item
                 mt-4
                 flex
                 items-center
@@ -503,7 +691,6 @@ const Contact = () => {
                 shadow-[0_6px_25px_rgba(23,37,61,0.05)]
               "
             >
-
               <div
                 className="
                   flex
@@ -521,7 +708,6 @@ const Contact = () => {
               </div>
 
               <div>
-
                 <p className="text-xs text-gray-400">
                   Opening Hours
                 </p>
@@ -536,11 +722,8 @@ const Contact = () => {
                 >
                   Mon - Sun: 8:00 AM - 10:00 PM
                 </p>
-
               </div>
-
             </div>
-
           </div>
 
           {/* =======================================
@@ -548,6 +731,7 @@ const Contact = () => {
           ======================================== */}
 
           <div
+            ref={formRef}
             className="
               rounded-[28px]
               bg-[#f4fbff]
@@ -556,7 +740,6 @@ const Contact = () => {
               lg:p-10
             "
           >
-
             <h3
               className="
                 text-2xl
@@ -579,17 +762,13 @@ const Contact = () => {
               as soon as possible.
             </p>
 
-            {/* FORM */}
-
             <form
               onSubmit={handleSubmit}
               className="mt-7 space-y-5"
             >
-
               {/* NAME */}
 
-              <div>
-
+              <div className="form-field">
                 <label
                   htmlFor="name"
                   className="
@@ -629,13 +808,11 @@ const Contact = () => {
                     focus:ring-[#087fd3]/10
                   "
                 />
-
               </div>
 
               {/* EMAIL */}
 
-              <div>
-
+              <div className="form-field">
                 <label
                   htmlFor="email"
                   className="
@@ -675,13 +852,11 @@ const Contact = () => {
                     focus:ring-[#087fd3]/10
                   "
                 />
-
               </div>
 
               {/* PHONE */}
 
-              <div>
-
+              <div className="form-field">
                 <label
                   htmlFor="phone"
                   className="
@@ -721,13 +896,11 @@ const Contact = () => {
                     focus:ring-[#087fd3]/10
                   "
                 />
-
               </div>
 
-              {/* MESSAGE / REVIEW */}
+              {/* MESSAGE */}
 
-              <div>
-
+              <div className="form-field">
                 <label
                   htmlFor="message"
                   className="
@@ -768,70 +941,67 @@ const Contact = () => {
                     focus:ring-[#087fd3]/10
                   "
                 />
-
               </div>
 
-              {/* SUBMIT BUTTON */}
+              {/* SUBMIT */}
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="
-                  flex
-                  w-full
-                  items-center
-                  justify-center
-                  gap-2
-                  rounded-full
-                  bg-[#087fd3]
-                  py-3.5
-                  text-sm
-                  font-bold
-                  text-white
-                  shadow-[0_6px_18px_rgba(0,100,180,0.25)]
-                  transition-all
-                  duration-300
-                  hover:-translate-y-1
-                  hover:bg-[#066db8]
-                  disabled:cursor-not-allowed
-                  disabled:opacity-60
-                "
-              >
-
-                {loading ? (
-                  <>
-                    <Loader2
-                      size={18}
-                      className="animate-spin"
-                    />
-
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    Send Message
-                    <Send size={17} />
-                  </>
-                )}
-
-              </button>
-
+              <div className="form-field">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="
+                    flex
+                    w-full
+                    items-center
+                    justify-center
+                    gap-2
+                    rounded-full
+                    bg-[#087fd3]
+                    py-3.5
+                    text-sm
+                    font-bold
+                    text-white
+                    shadow-[0_6px_18px_rgba(0,100,180,0.25)]
+                    transition-all
+                    duration-300
+                    hover:-translate-y-1
+                    hover:bg-[#066db8]
+                    disabled:cursor-not-allowed
+                    disabled:opacity-60
+                  "
+                >
+                  {loading ? (
+                    <>
+                      <Loader2
+                        size={18}
+                        className="animate-spin"
+                      />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      Send Message
+                      <Send size={17} />
+                    </>
+                  )}
+                </button>
+              </div>
             </form>
-
           </div>
-
         </div>
-
       </div>
 
       {/* =========================================
           QUICK CONTACT
       ========================================== */}
 
-      <div className="bg-[#ccecff]">
-
+      <div
+        ref={quickContactRef}
+        className="bg-[#ccecff]"
+      >
         <div
           className="
+            quick-contact-content
             mx-auto
             flex
             max-w-7xl
@@ -848,9 +1018,7 @@ const Contact = () => {
             lg:px-8
           "
         >
-
           <div>
-
             <p
               className="
                 text-xl
@@ -870,7 +1038,6 @@ const Contact = () => {
             >
               Give us a call and we'll be happy to help.
             </p>
-
           </div>
 
           <a
@@ -893,26 +1060,25 @@ const Contact = () => {
             "
           >
             <Phone size={17} />
-
             +92 323 3278821
           </a>
-
         </div>
-
       </div>
 
       {/* =========================================
           SOCIAL ICONS
       ========================================== */}
 
-      <div className="bg-white py-8">
-
+      <div
+        ref={socialRef}
+        className="bg-white py-8"
+      >
         <div className="flex items-center justify-center gap-6">
-
           <a
             href="#instagram"
             aria-label="Instagram"
             className="
+              social-icon
               text-[#17253d]
               transition-all
               duration-300
@@ -927,6 +1093,7 @@ const Contact = () => {
             href="#twitter"
             aria-label="X / Twitter"
             className="
+              social-icon
               text-[#17253d]
               transition-all
               duration-300
@@ -941,6 +1108,7 @@ const Contact = () => {
             href="#facebook"
             aria-label="Facebook"
             className="
+              social-icon
               text-[#17253d]
               transition-all
               duration-300
@@ -950,11 +1118,8 @@ const Contact = () => {
           >
             <FaFacebookF size={20} />
           </a>
-
         </div>
-
       </div>
-
     </section>
   );
 };
