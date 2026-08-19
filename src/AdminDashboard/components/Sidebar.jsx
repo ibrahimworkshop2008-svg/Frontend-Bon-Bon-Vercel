@@ -36,7 +36,7 @@ export default function Sidebar() {
     },
 
      {
-      name: "Products Oerview",
+      name: "Products Status",
       path: "/admin/products",
       icon: ShoppingBag,
     },
