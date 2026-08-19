@@ -10,14 +10,19 @@ import {
   RefreshCw,
 } from "lucide-react";
 import api from "../../api/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 const AdminOrders = ({ onViewOrder }) => {
+  const navigate =  useNavigate()
   const [orders, setOrders] = useState([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+
+
 
   // ================= FETCH ALL ORDERS =================
   const getAllOrders = async () => {
@@ -144,6 +149,13 @@ const AdminOrders = ({ onViewOrder }) => {
       return matchesSearch && matchesStatus;
     });
   }, [orders, search, statusFilter]);
+
+
+
+function GotoOrderStatus(id) {
+  onViewOrder?.(order);
+  navigate(`/admin/orders/${id}`);
+}
 
   // ================= LOADING =================
   if (loading) {
@@ -460,7 +472,11 @@ const AdminOrders = ({ onViewOrder }) => {
                     </div>
 
                     <button
-                      onClick={() => onViewOrder?.(order)}
+                    
+                      onClick={() => {
+                        GotoOrderStatus()
+                      }}
+                      
                       className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
                     >
                       <Eye size={17} />
@@ -620,9 +636,7 @@ const AdminOrders = ({ onViewOrder }) => {
                       <td className="whitespace-nowrap px-5 py-5 text-right">
 
                         <button
-                          onClick={() =>
-                            onViewOrder?.(order)
-                          }
+                            onClick={() => GotoOrderStatus(order._id)}
                           className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900"
                         >
                           <Eye size={16} />
