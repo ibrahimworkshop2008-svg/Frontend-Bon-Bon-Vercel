@@ -1,55 +1,32 @@
-import React, {
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   getAllProducts,
   deleteProduct,
 } from "../../api/productApi";
 
-import StatRing from "./StatRing";
 import Toast from "./Toast";
 import ProductFormModal from "./ProductFormModal";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import ProductTable from "./ProductTable";
-import ProductToolbar from "./ProductToolbar";
-
-import {
-  STATUS,
-  stockStatus,
-} from "./adminDashboardUtils";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
 
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] =
-    useState("all");
+  const [formTarget, setFormTarget] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
-  const [formTarget, setFormTarget] =
-    useState(null);
-
-  const [deleteTarget, setDeleteTarget] =
-    useState(null);
-
-  const [deleting, setDeleting] =
-    useState(false);
-
-  const [toast, setToast] =
-    useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const [toast, setToast] = useState(null);
 
   // =====================================================
   // TOAST
   // =====================================================
 
-  const showToast = (
-    message,
-    type = "success"
-  ) => {
+  const showToast = (message, type = "success") => {
     setToast({
       message,
       type,
@@ -73,16 +50,13 @@ export default function AdminProducts() {
     try {
       const data = await getAllProducts();
 
-      setProducts(
-        Array.isArray(data)
-          ? data
-          : data?.products || []
-      );
+      const productData = Array.isArray(data)
+        ? data
+        : data?.products || [];
+
+      setProducts(productData);
     } catch (error) {
-      console.error(
-        "Error loading products:",
-        error
-      );
+      console.error("Error loading products:", error);
 
       setLoadError(
         "Couldn't load the product list. Check your connection and try again."
@@ -92,66 +66,13 @@ export default function AdminProducts() {
     }
   };
 
+  // =====================================================
+  // LOAD PRODUCTS
+  // =====================================================
+
   useEffect(() => {
     loadProducts();
   }, []);
-
-  // =====================================================
-  // SEARCH + FILTER
-  // =====================================================
-
-  const filtered = useMemo(() => {
-    return products.filter((product) => {
-      const matchesSearch =
-        product.name
-          ?.toLowerCase()
-          .includes(
-            search.toLowerCase()
-          );
-
-      const matchesStatus =
-        statusFilter === "all" ||
-        stockStatus(product.stock) ===
-          statusFilter;
-
-      return (
-        matchesSearch &&
-        matchesStatus
-      );
-    });
-  }, [
-    products,
-    search,
-    statusFilter,
-  ]);
-
-  // =====================================================
-  // PRODUCT COUNTS
-  // =====================================================
-
-  const counts = useMemo(() => {
-    const total = products.length;
-
-    const inStock =
-      products.filter(
-        (product) =>
-          stockStatus(product.stock) ===
-          STATUS.IN_STOCK
-      ).length;
-
-    const out =
-      products.filter(
-        (product) =>
-          stockStatus(product.stock) ===
-          STATUS.OUT
-      ).length;
-
-    return {
-      total,
-      inStock,
-      out,
-    };
-  }, [products]);
 
   // =====================================================
   // DELETE PRODUCT
@@ -163,23 +84,15 @@ export default function AdminProducts() {
     setDeleting(true);
 
     try {
-      await deleteProduct(
-        deleteTarget._id
-      );
+      await deleteProduct(deleteTarget._id);
 
-      showToast(
-        "Product removed successfully."
-      );
+      showToast("Product removed successfully.");
 
       setDeleteTarget(null);
 
       await loadProducts();
-
     } catch (error) {
-      console.error(
-        "Delete product error:",
-        error
-      );
+      console.error("Delete product error:", error);
 
       showToast(
         error?.response?.data?.message ||
@@ -191,6 +104,10 @@ export default function AdminProducts() {
     }
   };
 
+  // =====================================================
+  // RENDER
+  // =====================================================
+
   return (
     <div
       className="min-h-screen w-full overflow-x-hidden bg-[#FFFBF5]"
@@ -198,66 +115,52 @@ export default function AdminProducts() {
         fontFamily: "'Inter', sans-serif",
       }}
     >
-
-      <main className="mx-auto w-full max-w-6xl px-4 py-5 sm:px-6 md:px-10 md:py-8">
-
-        {/* =================================================
-            HEADER / TOOLBAR
-        ================================================= */}
-
-        <ProductToolbar
-          search={search}
-          setSearch={setSearch}
-          statusFilter={statusFilter}
-          setStatusFilter={setStatusFilter}
-          onNewProduct={() =>
-            setFormTarget({})
-          }
-        />
+      <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 md:px-8 md:py-8">
 
         {/* =================================================
-            PRODUCT STATS
+            HEADER
         ================================================= */}
 
-        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1
+              className="text-2xl font-bold text-[#1A1A2E] sm:text-3xl"
+              style={{
+                fontFamily: "'Baloo 2', sans-serif",
+              }}
+            >
+              Products
+            </h1>
 
-          <StatRing
-            label="Total products"
-            value={counts.total}
-            pct={100}
-            color="#1C6FEB"
-          />
+            <p className="mt-1 text-sm text-[#8A897F]">
+              Manage your products
+            </p>
+          </div>
 
-          <StatRing
-            label="In stock"
-            value={counts.inStock}
-            pct={
-              counts.total
-                ? (counts.inStock /
-                    counts.total) *
-                  100
-                : 0
-            }
-            color="#1C6FEB"
-          />
-
-          <StatRing
-            label="Out of stock"
-            value={counts.out}
-            pct={
-              counts.total
-                ? (counts.out /
-                    counts.total) *
-                  100
-                : 0
-            }
-            color="#D4537E"
-          />
-
+          <button
+            type="button"
+            onClick={() => setFormTarget({})}
+            className="
+              rounded-full
+              bg-[#1C6FEB]
+              px-5
+              py-2.5
+              text-sm
+              font-semibold
+              text-white
+              transition-all
+              duration-300
+              hover:-translate-y-0.5
+              hover:opacity-90
+              active:scale-95
+            "
+          >
+            + Add Product
+          </button>
         </div>
 
         {/* =================================================
-            PRODUCT TABLE
+            PRODUCTS
         ================================================= */}
 
         <div className="overflow-hidden rounded-2xl border border-[#EEE7DA] bg-white">
@@ -265,27 +168,38 @@ export default function AdminProducts() {
           {/* LOADING */}
 
           {loading && (
-            <div className="px-6 py-14 text-center">
+            <div className="px-6 py-16 text-center">
+              <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-[#E5E7EB] border-t-[#1C6FEB]" />
 
               <p className="text-sm text-[#8A897F]">
                 Loading products...
               </p>
-
             </div>
           )}
 
           {/* ERROR */}
 
           {!loading && loadError && (
-            <div className="px-6 py-14 text-center">
+            <div className="px-6 py-16 text-center">
 
-              <p className="mb-3 text-sm text-[#993C1D]">
+              <p className="mb-4 text-sm text-[#993C1D]">
                 {loadError}
               </p>
 
               <button
+                type="button"
                 onClick={loadProducts}
-                className="rounded-full bg-[#1C6FEB] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+                className="
+                  rounded-full
+                  bg-[#1C6FEB]
+                  px-5
+                  py-2.5
+                  text-sm
+                  font-medium
+                  text-white
+                  transition
+                  hover:opacity-90
+                "
               >
                 Retry
               </button>
@@ -297,66 +211,70 @@ export default function AdminProducts() {
 
           {!loading &&
             !loadError &&
-            filtered.length === 0 && (
-              <div className="px-6 py-14 text-center">
+            products.length === 0 && (
+              <div className="px-6 py-16 text-center">
 
-                <p
-                  className="text-base font-[700] text-[#1A1A2E]"
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#F3F7FF]">
+                  <span className="text-2xl">
+                    📦
+                  </span>
+                </div>
+
+                <h2
+                  className="mt-5 text-xl font-bold text-[#1A1A2E]"
                   style={{
                     fontFamily:
                       "'Baloo 2', sans-serif",
                   }}
                 >
-                  {products.length === 0
-                    ? "No products yet"
-                    : "No matches"}
+                  No products yet
+                </h2>
+
+                <p className="mt-1 text-sm text-[#8A897F]">
+                  Add your first product to start selling.
                 </p>
 
-                <p className="mb-4 mt-1 text-sm text-[#8A897F]">
-                  {products.length === 0
-                    ? "Add your first batch to start selling."
-                    : "Try a different search or filter."}
-                </p>
-
-                {products.length ===
-                  0 && (
-                  <button
-                    onClick={() =>
-                      setFormTarget({})
-                    }
-                    className="rounded-full bg-[#1C6FEB] px-4 py-2 text-sm font-[700] text-white transition hover:opacity-90"
-                  >
-                    Add product
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() => setFormTarget({})}
+                  className="
+                    mt-5
+                    rounded-full
+                    bg-[#1C6FEB]
+                    px-5
+                    py-2.5
+                    text-sm
+                    font-semibold
+                    text-white
+                    transition
+                    hover:opacity-90
+                  "
+                >
+                  Add Product
+                </button>
 
               </div>
             )}
 
-          {/* PRODUCTS */}
+          {/* PRODUCT TABLE */}
 
           {!loading &&
             !loadError &&
-            filtered.length > 0 && (
+            products.length > 0 && (
               <ProductTable
-                filteredProducts={
-                  filtered
-                }
-                onEdit={(product) =>
-                  setFormTarget(
-                    product
-                  )
-                }
-                onDelete={(product) =>
-                  setDeleteTarget(
-                    product
-                  )
-                }
+                filteredProducts={products}
+
+                onEdit={(product) => {
+                  setFormTarget(product);
+                }}
+
+                onDelete={(product) => {
+                  setDeleteTarget(product);
+                }}
               />
             )}
 
         </div>
-
       </main>
 
       {/* ===================================================
@@ -370,9 +288,9 @@ export default function AdminProducts() {
               ? formTarget
               : null
           }
-          onClose={() =>
-            setFormTarget(null)
-          }
+          onClose={() => {
+            setFormTarget(null);
+          }}
           onSaved={() => {
             setFormTarget(null);
             loadProducts();
@@ -389,9 +307,9 @@ export default function AdminProducts() {
         <ConfirmDeleteModal
           product={deleteTarget}
           deleting={deleting}
-          onCancel={() =>
-            setDeleteTarget(null)
-          }
+          onCancel={() => {
+            setDeleteTarget(null);
+          }}
           onConfirm={handleDelete}
         />
       )}
@@ -401,7 +319,6 @@ export default function AdminProducts() {
       =================================================== */}
 
       <Toast toast={toast} />
-
     </div>
   );
 }
