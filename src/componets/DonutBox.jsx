@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from "react";
+import React, { useLayoutEffect, useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -24,149 +24,287 @@ const DonutBox = () => {
 
       gsap.set(headingRef.current, {
         opacity: 0,
-        y: 70,
+        y: 80,
       });
 
       gsap.set(paragraphsRef.current?.children, {
         opacity: 0,
-        y: 35,
+        y: 40,
       });
 
       gsap.set(buttonsRef.current?.children, {
         opacity: 0,
-        y: 25,
+        y: 30,
         scale: 0.9,
       });
 
       gsap.set(imageRef.current, {
         opacity: 0,
-        x: 120,
-        scale: 0.85,
-        rotation: 3,
+        x: 140,
+        scale: 0.8,
+        rotation: 5,
       });
 
       gsap.set(circleRef.current, {
         opacity: 0,
         scale: 0.5,
-        rotation: -20,
+        rotation: -30,
       });
 
       /* =====================================================
-         MAIN SCROLL ANIMATION
+         MAIN SCROLL TRIGGER
       ===================================================== */
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
+
+          // Animation starts when section reaches this point
           start: "top 75%",
+
+          // Animation only plays once
           toggleActions: "play none none none",
         },
       });
 
-      /* Heading */
+      /* =====================================================
+         HEADING
+      ===================================================== */
 
       tl.to(headingRef.current, {
         opacity: 1,
         y: 0,
         duration: 0.9,
         ease: "power3.out",
-      })
-
-        /* Paragraphs */
-
-        .to(
-          paragraphsRef.current?.children,
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.65,
-            stagger: 0.18,
-            ease: "power3.out",
-          },
-          "-=0.45"
-        )
-
-        /* Buttons */
-
-        .to(
-          buttonsRef.current?.children,
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.55,
-            stagger: 0.12,
-            ease: "back.out(1.7)",
-          },
-          "-=0.3"
-        )
-
-        /* Blue Circle */
-
-        .to(
-          circleRef.current,
-          {
-            opacity: 1,
-            scale: 1,
-            rotation: 0,
-            duration: 1,
-            ease: "back.out(1.4)",
-          },
-          "-=0.7"
-        )
-
-        /* Donut Image */
-
-        .to(
-          imageRef.current,
-          {
-            opacity: 1,
-            x: 0,
-            scale: 1,
-            rotation: 0,
-            duration: 1.1,
-            ease: "power3.out",
-          },
-          "-=0.8"
-        );
+      });
 
       /* =====================================================
-         DONUT FLOATING ANIMATION
+         PARAGRAPHS
+      ===================================================== */
+
+      tl.to(
+        paragraphsRef.current?.children,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.65,
+          stagger: 0.18,
+          ease: "power3.out",
+        },
+        "-=0.45"
+      );
+
+      /* =====================================================
+         BUTTONS
+      ===================================================== */
+
+      tl.to(
+        buttonsRef.current?.children,
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.55,
+          stagger: 0.12,
+          ease: "back.out(1.7)",
+        },
+        "-=0.3"
+      );
+
+      /* =====================================================
+         BLUE CIRCLE
+      ===================================================== */
+
+      tl.to(
+        circleRef.current,
+        {
+          opacity: 1,
+          scale: 1,
+          rotation: 0,
+          duration: 1,
+          ease: "back.out(1.4)",
+        },
+        "-=0.7"
+      );
+
+      /* =====================================================
+         DONUT IMAGE
+      ===================================================== */
+
+      tl.to(
+        imageRef.current,
+        {
+          opacity: 1,
+          x: 0,
+          scale: 1,
+          rotation: 0,
+          duration: 1.1,
+          ease: "power3.out",
+        },
+        "-=0.8"
+      );
+
+      /* =====================================================
+         DONUT PARALLAX
       ===================================================== */
 
       gsap.to(imageRef.current, {
-        y: -10,
+        y: -80,
+
+        ease: "none",
+
+        scrollTrigger: {
+          trigger: sectionRef.current,
+
+          start: "top bottom",
+          end: "bottom top",
+
+          scrub: 1.2,
+        },
+      });
+
+      /* =====================================================
+         BLUE CIRCLE PARALLAX
+      ===================================================== */
+
+      gsap.to(circleRef.current, {
+        y: 100,
+        x: -30,
+
+        ease: "none",
+
+        scrollTrigger: {
+          trigger: sectionRef.current,
+
+          start: "top bottom",
+          end: "bottom top",
+
+          scrub: 1.5,
+        },
+      });
+
+      /* =====================================================
+         HEADING PARALLAX
+      ===================================================== */
+
+      gsap.to(headingRef.current, {
+        y: -30,
+
+        ease: "none",
+
+        scrollTrigger: {
+          trigger: sectionRef.current,
+
+          start: "top bottom",
+          end: "bottom top",
+
+          scrub: 1,
+        },
+      });
+
+      /* =====================================================
+         CONTENT PARALLAX
+      ===================================================== */
+
+      gsap.to(paragraphsRef.current, {
+        y: -15,
+
+        ease: "none",
+
+        scrollTrigger: {
+          trigger: sectionRef.current,
+
+          start: "top bottom",
+          end: "bottom top",
+
+          scrub: 1,
+        },
+      });
+
+      /* =====================================================
+         FLOATING DONUT
+      ===================================================== */
+
+      gsap.to(imageRef.current, {
+        y: "-=10",
+
         duration: 2.5,
+
         repeat: -1,
+
         yoyo: true,
+
         ease: "sine.inOut",
+
         delay: 1.8,
       });
 
       /* =====================================================
-         BLUE CIRCLE FLOATING ANIMATION
+         FLOATING BLUE CIRCLE
       ===================================================== */
 
       gsap.to(circleRef.current, {
-        y: 12,
-        x: -8,
+        y: "+=12",
+        x: "-=8",
+
         duration: 3,
+
         repeat: -1,
+
         yoyo: true,
+
         ease: "sine.inOut",
+
         delay: 1.5,
       });
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+    };
   }, []);
+  const buildBoxRef = useRef(null);
+
+  useEffect(() => {
+  const button = buildBoxRef.current;
+
+  if (!button) return;
+
+  gsap.fromTo(
+    button,
+    {
+      opacity: 0,
+      y: 30,
+      scale: 0.9,
+    },
+    {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.8,
+      delay: 0.3,
+      ease: "back.out(1.7)",
+    }
+  );
+}, []);
 
   return (
     <section
       ref={sectionRef}
-      className="w-full overflow-hidden bg-white"
+      className="
+        w-full
+        overflow-hidden
+        bg-white
+      "
     >
-      <div className="mx-auto max-w-7xl px-6 lg:px-12">
+      <div
+        className="
+          mx-auto
+          max-w-7xl
+          px-6
+          lg:px-12
+        "
+      >
         <div
           className="
             flex
@@ -178,6 +316,7 @@ const DonutBox = () => {
             lg:flex-row
           "
         >
+
           {/* =================================================
               LEFT CONTENT
           ================================================= */}
@@ -194,6 +333,7 @@ const DonutBox = () => {
               lg:text-left
             "
           >
+
             {/* HEADING */}
 
             <h2
@@ -219,6 +359,7 @@ const DonutBox = () => {
             {/* PARAGRAPHS */}
 
             <div ref={paragraphsRef}>
+
               <p
                 className="
                   mt-7
@@ -230,9 +371,13 @@ const DonutBox = () => {
                 "
               >
                 Choose 4, 6 or 9 of your favorite donuts
+
                 <br className="hidden sm:block" />
+
                 and create the perfect box
+
                 <br className="hidden sm:block" />
+
                 for any occasion.
               </p>
 
@@ -247,41 +392,97 @@ const DonutBox = () => {
                 "
               >
                 You can also add a card
+
                 <br className="hidden sm:block" />
+
                 with a personal message.
               </p>
+
             </div>
 
             {/* BUTTONS */}
 
             <div
               ref={buttonsRef}
-              className="flex flex-col items-center lg:items-start"
+              className="
+                flex
+                flex-col
+                items-center
+                lg:items-start
+              "
             >
-              <button
-                type="button"
-                className="
-                  mt-7
-                  rounded-full
-                  bg-[#087fd3]
-                  px-9
-                  py-3
-                  text-lg
-                  font-bold
-                  text-white
-                  shadow-[0_5px_12px_rgba(0,100,180,0.3)]
-                  transition-all
-                  duration-300
 
-                  hover:-translate-y-1
-                  hover:bg-[#066db8]
-                  hover:shadow-[0_8px_18px_rgba(0,100,180,0.35)]
+             <button
+  ref={buildBoxRef}
+  type="button"
+  onMouseEnter={(e) => {
+    gsap.to(e.currentTarget, {
+      y: -5,
+      scale: 1.05,
+      duration: 0.3,
+      ease: "power2.out",
+      boxShadow:
+        "0 15px 35px rgba(8, 127, 211, 0.35)",
+    });
+  }}
+  onMouseLeave={(e) => {
+    gsap.to(e.currentTarget, {
+      y: 0,
+      scale: 1,
+      duration: 0.35,
+      ease: "power2.out",
+      boxShadow:
+        "0 5px 12px rgba(0,100,180,0.3)",
+    });
+  }}
+  onMouseDown={(e) => {
+    gsap.to(e.currentTarget, {
+      scale: 0.94,
+      duration: 0.12,
+      ease: "power2.out",
+    });
+  }}
+  onMouseUp={(e) => {
+    gsap.to(e.currentTarget, {
+      scale: 1.05,
+      duration: 0.2,
+      ease: "back.out(2)",
+    });
+  }}
+  className="
+    relative
+    mt-7
+    overflow-hidden
+    rounded-full
+    bg-[#087fd3]
+    px-9
+    py-3
+    text-lg
+    font-bold
+    text-white
+    shadow-[0_5px_12px_rgba(0,100,180,0.3)]
+    outline-none
+  "
+>
+  {/* Shine Effect */}
+  <span
+    className="
+      pointer-events-none
+      absolute
+      inset-y-0
+      -left-10
+      w-8
+      rotate-12
+      bg-white/40
+      blur-sm
+    "
+  />
 
-                  active:scale-95
-                "
-              >
-                Build a Box
-              </button>
+  {/* Button Text */}
+  <span className="relative z-10">
+    Build a Box
+  </span>
+</button>
 
               <button
                 type="button"
@@ -297,6 +498,7 @@ const DonutBox = () => {
               >
                 Learn more
               </button>
+
             </div>
           </div>
 
@@ -313,7 +515,14 @@ const DonutBox = () => {
               lg:justify-end
             "
           >
-            <div className="relative w-full max-w-[650px]">
+            <div
+              className="
+                relative
+                w-full
+                max-w-[650px]
+              "
+            >
+
               {/* BLUE CIRCLE */}
 
               <div
@@ -351,8 +560,10 @@ const DonutBox = () => {
                   drop-shadow-[0_20px_25px_rgba(0,0,0,0.12)]
                 "
               />
+
             </div>
           </div>
+
         </div>
       </div>
     </section>
