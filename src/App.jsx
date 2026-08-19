@@ -48,8 +48,8 @@ const AppContent = () => {
     "/checkout",
     "/admin",
     "/admin/orders",
-    "/adminproducts",
-    "/adminproductsShow"
+    "/admin/products",
+    "/admin/productsShow"
   ];
 
   const hideLayout = hideLayoutPages.includes(location.pathname);
